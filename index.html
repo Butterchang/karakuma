@@ -15,7 +15,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP'
 .wrap{max-width:680px;margin:0 auto;padding:12px 14px}
 h2{font-size:14px;font-weight:700;border-left:4px solid var(--c,#c53030);padding-left:10px;margin:18px 0 10px}
 
-/* Schedule */
+/* Train info banner */
+.train-info{background:linear-gradient(135deg,#ebf8ff,#e9d8fd);border:1px solid #bee3f8;border-radius:10px;padding:12px;margin:12px 0;font-size:11.5px;line-height:1.7;color:#2b6cb0}
+.train-info strong{font-size:12.5px;color:#1a365d}
+.train-info .route{background:#fff;border-radius:6px;padding:8px 10px;margin-top:6px;font-size:11px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.train-info .station{background:#2b6cb0;color:#fff;padding:2px 8px;border-radius:4px;font-weight:600;font-size:10.5px}
+.train-info .arrow{color:#a0aec0;font-size:13px}
+.train-info .time-label{color:#718096;font-size:10px}
+
 .stop{display:flex;gap:10px;margin-bottom:8px;background:#fff;border-radius:10px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.05);border-left:4px solid var(--c,#2b6cb0);cursor:pointer;transition:transform .12s}
 .stop:active{transform:scale(.98)}
 .stop .t{min-width:42px;font-weight:700;font-size:12px;color:var(--c)}
@@ -23,276 +30,207 @@ h2{font-size:14px;font-weight:700;border-left:4px solid var(--c,#c53030);padding
 .tag{display:inline-block;font-size:9.5px;color:#fff;background:var(--c,#2b6cb0);border-radius:4px;padding:1px 6px;margin-top:3px}
 .rec{display:inline-block;font-size:9px;color:#ed8936;border:1px solid #ed8936;border-radius:3px;padding:0 5px;margin-left:4px;font-weight:600;vertical-align:middle}
 
-/* Spot cards with photos */
-.spot{background:#fff;border-radius:12px;overflow:hidden;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);cursor:pointer;transition:transform .12s}
-.spot:active{transform:scale(.98)}
-.spot img{width:100%;height:180px;object-fit:cover;display:block}
-.spot .body{padding:11px 13px}
-.spot h3{font-size:14px;margin-bottom:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.spot .stars{color:#ed8936;font-size:11px;white-space:nowrap}
-.spot .desc{font-size:11.5px;color:#4a5568;line-height:1.6;margin:4px 0}
-.spot .meta{font-size:10px;color:#a0aec0;margin-top:4px}
-.spot .meta span{margin-right:10px}
+.spot-card{background:#fff;border-radius:12px;overflow:hidden;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,.06);cursor:pointer;transition:transform .12s}
+.spot-card:active{transform:scale(.98)}
+.spot-card img{width:100%;height:180px;object-fit:cover;display:block}
+.spot-card .body{padding:12px}
+.spot-card h3{font-size:14px;margin-bottom:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.spot-card .badge{display:inline-block;font-size:9px;color:#fff;border-radius:3px;padding:1px 6px;font-weight:600}
+.spot-card .desc{font-size:11.5px;color:#4a5568;line-height:1.65;margin-top:4px}
+.spot-card .meta{font-size:10.5px;color:#a0aec0;margin-top:6px;display:flex;gap:12px;flex-wrap:wrap}
 
-/* Food cards */
-.food{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.04);cursor:pointer;transition:transform .12s}
-.food:active{transform:scale(.98)}
-.food .row{display:flex;gap:0}
-.food img{width:110px;min-height:100px;object-fit:cover;flex-shrink:0}
-.food .body{padding:9px 11px;flex:1;min-width:0}
-.food h4{font-size:12.5px;margin-bottom:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-.food .stars{color:#ed8936;font-size:10.5px;white-space:nowrap}
-.food .menu{font-size:11.5px;color:#c05621;font-weight:600;margin:2px 0}
-.food .desc{font-size:10.5px;color:#718096;line-height:1.45}
-.food .rv{font-size:10px;color:#a0aec0;margin-top:4px;padding-top:4px;border-top:1px solid #f0f0f0;line-height:1.45;font-style:italic}
-.food .rv::before{content:"💬 ";font-style:normal}
+.food-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.04);cursor:pointer;transition:transform .12s}
+.food-card:active{transform:scale(.98)}
+.food-card .fc-inner{display:flex;gap:0}
+.food-card .fc-img{width:110px;min-height:100px;object-fit:cover;flex-shrink:0}
+.food-card .fc-body{padding:10px;flex:1;min-width:0}
+.food-card h4{font-size:12.5px;margin-bottom:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.food-card .stars{color:#ed8936;font-size:10.5px;white-space:nowrap}
+.food-card .menu{font-size:11.5px;color:#c05621;font-weight:600;margin:2px 0}
+.food-card .desc{font-size:10.5px;color:#718096;line-height:1.45}
+.food-card .rv{font-size:10px;color:#a0aec0;margin-top:4px;padding-top:4px;border-top:1px solid #f0f0f0;line-height:1.45;font-style:italic}
+.food-card .rv::before{content:"\1F4AC ";font-style:normal}
 .cl{display:inline-block;font-size:8.5px;border-radius:3px;padding:1px 5px;font-weight:600;color:#fff;flex-shrink:0}
 .cl-l{background:#c53030}.cl-s{background:#ed8936}.cl-c{background:#2b6cb0}
 
-@media(max-width:480px){.food img{width:90px;min-height:90px}.spot img{height:150px}}
-
-.notes{background:#ebf8ff;border:1px solid #bee3f8;border-radius:8px;padding:11px;font-size:11.5px;color:#2b6cb0;line-height:1.7;margin:16px 0 28px}
-.notes strong{font-size:12px}
+.notes-box{background:#ebf8ff;border:1px solid #bee3f8;border-radius:8px;padding:11px;font-size:11.5px;color:#2b6cb0;line-height:1.7;margin:14px 0 24px}
+.notes-box strong{font-size:12px}
 .popup-title{font-weight:700;font-size:13px;margin-bottom:3px}
 .popup-sub{font-size:11px;color:#718096}
 .popup-link{font-size:10px;margin-top:4px}
 .popup-link a{color:#2b6cb0;text-decoration:none}
+@media(max-width:480px){.food-card .fc-img{width:90px;min-height:90px}.spot-card img{height:150px}}
 </style>
 </head>
 <body>
-<div class="hd">
-  <h1>福岡最終日プラン</h1>
-  <p>2026年3月11日（水）── チーム共有用</p>
-</div>
+<div class="hd"><h1>福岡最終日プラン</h1><p>2026年3月11日（水）── チーム共有用</p></div>
 <div id="map"></div>
 <div class="wrap">
 
-<!-- ===== SCHEDULE ===== -->
+<div class="train-info">
+  <strong>🚃 本日は電車移動！</strong><br>
+  西鉄の急行で天神から太宰府まで直通28分。渋滞の心配なし！
+  <div class="route">
+    <span class="station">唐人町</span><span class="arrow">→</span><span class="time-label">地下鉄4分</span>
+    <span class="arrow">→</span><span class="station">天神</span><span class="arrow">→</span><span class="time-label">徒歩5分</span>
+    <span class="arrow">→</span><span class="station">西鉄福岡（天神）</span><span class="arrow">→</span><span class="time-label">急行28分 ¥420</span>
+    <span class="arrow">→</span><span class="station">太宰府</span>
+  </div>
+  <div class="route" style="margin-top:4px">
+    <span class="station">天神</span><span class="arrow">→</span><span class="time-label">地下鉄11分 ¥260</span>
+    <span class="arrow">→</span><span class="station">福岡空港</span>
+  </div>
+</div>
+
 <h2 style="--c:#1a365d">スケジュール（目安）</h2>
+<div class="stop" style="--c:#1a365d" onclick="flyTo(0)"><div class="t">~10:30</div><div><h3>ホテル チェックアウト＆出発</h3><p>10:00チェックアウト → 荷物をフロントに預けて唐人町駅へ（徒歩約5分）</p></div></div>
+<div class="stop" style="--c:#2b6cb0" onclick="flyTo(1)"><div class="t">~10:45</div><div><h3>西鉄福岡（天神）駅</h3><p>地下鉄で天神へ → 西鉄に乗り換え → 急行で太宰府へ（28分・¥420）</p><span class="tag" style="background:#2b6cb0">毎時18分・48分発</span></div></div>
+<div class="stop" style="--c:#c53030" onclick="flyTo(2)"><div class="t">~11:30</div><div><h3>太宰府天満宮 ＆ 参道散策</h3><p>仮殿参拝（2026年5月まで限定！）→ 参道で食べ歩きランチ</p><span class="tag" style="background:#c53030">メインスポット</span></div></div>
+<div class="stop" style="--c:#38a169" onclick="flyTo(3)"><div class="t">~13:00</div><div><h3>天開稲荷社 <span class="rec">おすすめ</span></h3><p>天満宮奥の末社。赤い鳥居のトンネル。往復約20分</p></div></div>
+<div class="stop" style="--c:#38a169" onclick="flyTo(4)"><div class="t">~13:30</div><div><h3>九州国立博物館 <span class="rec">おすすめ</span></h3><p>天満宮裏から連絡通路で直結。ガラス張りの外観が圧巻（水曜開館）</p></div></div>
+<div class="stop" style="--c:#2b6cb0" onclick="flyTo(1)"><div class="t">~14:30</div><div><h3>西鉄で天神へ戻る</h3><p>太宰府駅 → 西鉄二日市で乗り換え → 西鉄福岡（天神）駅（約35分）</p></div></div>
+<div class="stop" style="--c:#2b6cb0" onclick="flyTo(5)"><div class="t">~15:00</div><div><h3>天神・ワンビル <span class="rec">おすすめ</span></h3><p>2025年開業の新ランドマーク。6階スカイロビーは誰でも利用可能</p></div></div>
+<div class="stop" style="--c:#1a365d" onclick="flyTo(0)"><div class="t">~16:30</div><div><h3>ホテルへ戻り荷物回収</h3><p>地下鉄で天神→唐人町（4分）→ ホテルで荷物ピックアップ</p></div></div>
+<div class="stop" style="--c:#718096" onclick="flyTo(6)"><div class="t">~17:00</div><div><h3>福岡空港へ移動</h3><p>地下鉄 唐人町→福岡空港（直通約15分・¥310）</p></div></div>
+<div class="stop" style="--c:#718096" onclick="flyTo(6)"><div class="t">18:20</div><div><h3>福岡空港 集合</h3><p>東京へ帰還！</p></div></div>
 
-<div class="stop" style="--c:#1a365d" onclick="flyTo(0)">
-  <div class="t">~10:30</div>
-  <div><h3>ホテル チェックアウト＆出発</h3><p>10:00チェックアウト → 荷物を預けて車で太宰府へ（約30分）</p></div>
-</div>
-<div class="stop" style="--c:#c53030" onclick="flyTo(1)">
-  <div class="t">~11:00</div>
-  <div><h3>太宰府天満宮 ＆ 参道散策</h3>
-  <p>仮殿参拝（2026年5月まで限定！）→ 参道で食べ歩きランチ</p>
-  <span class="tag" style="background:#c53030">メインスポット</span></div>
-</div>
-<div class="stop" style="--c:#38a169" onclick="flyTo(2)">
-  <div class="t">~12:30</div>
-  <div><h3>天開稲荷社 <span class="rec">おすすめ</span></h3>
-  <p>天満宮奥の末社。赤い鳥居のトンネルが美しい。往復約20分</p></div>
-</div>
-<div class="stop" style="--c:#38a169" onclick="flyTo(3)">
-  <div class="t">~13:00</div>
-  <div><h3>九州国立博物館 <span class="rec">おすすめ</span></h3>
-  <p>天満宮裏の連絡通路で直結。ガラス張りの外観が圧巻（水曜開館 9:30-17:00）</p></div>
-</div>
-<div class="stop" style="--c:#ed8936" onclick="flyTo(4)">
-  <div class="t">~13:30</div>
-  <div><h3>宝満宮 竈門神社 <span class="rec">おすすめ</span></h3>
-  <p>車で約10分。縁結びのお守り＆展望台で記念撮影（駐車場¥500）</p></div>
-</div>
-<div class="stop" style="--c:#2b6cb0" onclick="flyTo(5)">
-  <div class="t">~15:00</div>
-  <div><h3>天神・ワンビル <span class="rec">おすすめ</span></h3>
-  <p>2025年開業の新ランドマーク。6Fスカイロビーは無料（カフェで1杯購入が条件）</p></div>
-</div>
-<div class="stop" style="--c:#1a365d" onclick="flyTo(0)">
-  <div class="t">~17:30</div>
-  <div><h3>ホテルへ戻り → 荷物回収</h3>
-  <p>ガソリン給油 → レンタカー返却 → 福岡空港へ</p></div>
-</div>
-<div class="stop" style="--c:#718096" onclick="flyTo(6)">
-  <div class="t">18:20</div>
-  <div><h3>福岡空港 集合</h3><p>東京へ帰還！</p></div>
+<h2 style="--c:#c53030">注目スポット紹介</h2>
+
+<div class="spot-card" onclick="flyTo(2)">
+  <img src="https://lh3.googleusercontent.com/place-photos/AL8-SNEj30_v6mEJ7CiVbnytgMmSNFKDDiyphVZNVF8pUpn0EGO8ktppjIHNui1AQ4xxl4N9MeVbO6Qdg6uMwKqFFlh9xKZ6iTAgyFEZRINX_XyyAVvE2s_vozJm8b42teTH4x5t7-J7O1E5seeoyA=s4800-w800-h400" alt="太宰府天満宮 仮殿" loading="lazy">
+  <div class="body"><h3>太宰府天満宮「仮殿」<span class="badge" style="background:#c53030">2026年5月まで限定</span></h3>
+  <div class="desc">学問の神様・菅原道真公を祀る全国天満宮の総本宮。124年ぶりの御本殿大改修に伴い、建築家・藤本壮介氏が設計した「仮殿」が話題。屋根の上に60種以上の植物が茂り、自然と建築が融合した唯一無二の空間。内部の御帳はファッションブランド「マメクロゴウチ」がデザインし、音響はサカナクションの山口一郎氏が監修。改修完了後は解体されるため、今しか見られない。参道には約90店舗が軒を連ね、食べ歩きも楽しめる。</div>
+  <div class="meta"><span>★ 4.4（41,704件）</span><span>6:30〜18:30</span><span>西鉄太宰府駅から徒歩5分</span></div></div>
 </div>
 
-<!-- ===== SPOT DETAILS ===== -->
-<h2 style="--c:#c53030">スポット紹介</h2>
-
-<div class="spot" onclick="flyTo(1)">
-  <img src="https://lh3.googleusercontent.com/place-photos/AL8-SNFKMvMPZIoeKIzPP6S7b7tx5acBiAX9a8dn7-sR0yFwDGbbJP_S2T8MeAjOW1Cp1M2HF5f-TDlxzhwXuHyvq1a_9dPh27tFQJgtTOgI_iZd6QF-4S3P1Me44iqpfjZlB3T0qu7gmqeIW3gMCg=s800-w800-h400" alt="太宰府天満宮 仮殿">
-  <div class="body">
-    <h3>太宰府天満宮「仮殿」 <span class="stars">★4.4（41,704件）</span></h3>
-    <span class="tag" style="background:#c53030">メインスポット</span> <span class="tag" style="background:#718096">2026年5月上旬まで</span>
-    <div class="desc">学問・文化・芸術の神様、菅原道真公を祀る全国天満宮の総本宮。124年ぶりの御本殿大改修に伴い、建築家・藤本壮介氏が設計した仮殿が2023年から公開中。屋根に60種以上の植物が茂り、自然と建築が融合した唯一無二の空間。内部の御帳はファッションブランドMame Kurogouchiがデザイン、音響はサカナクション山口一郎氏が監修。改修完了後は解体されるため、今しか見られない期間限定の建築。</div>
-    <div class="meta"><span>📍 太宰府市宰府4-7-1</span><span>🕐 6:30〜18:30</span><span>💰 無料</span></div>
-  </div>
+<div class="spot-card" onclick="flyTo(3)">
+  <img src="https://lh3.googleusercontent.com/place-photos/AL8-SNHWQgwegaXv2-Ogig9ilfeMR1E1E79G7u9V8p8zn5zyU_f34_6rK-EjePWD6KINHQLfIR3Lva0Sro_3NeQs-_LdD4JL8cKJ3s4_bdyeKrSj17ULJvf_b-JNwUZ_skdK5r-KTgx9VjS41iU8wA=s4800-w800-h400" alt="天開稲荷社" loading="lazy">
+  <div class="body"><h3>天開稲荷社 <span class="badge" style="background:#38a169">おすすめ</span></h3>
+  <div class="desc">太宰府天満宮の本殿奥、石段を登った先にある九州最古のお稲荷さん。連なる赤い鳥居のトンネルが美しく、奥の院は知る人ぞ知るパワースポット。十二支の鈴を鳴らして参拝するユニークな方式が特徴。参道からの往復は約20分で、軽いハイキング気分で楽しめる。観光客が少なく静かに参拝できる穴場。</div>
+  <div class="meta"><span>★ 4.5（844件）</span><span>6:30〜18:30</span><span>天満宮本殿から徒歩約10分</span></div></div>
 </div>
 
-<div class="spot" onclick="flyTo(2)">
-  <img src="https://lh3.googleusercontent.com/place-photos/AL8-SNHWQgwegaXv2-Ogig9ilfeMR1E1E79G7u9V8p8zn5zyU_f34_6rK-EjePWD6KINHQLfIR3Lva0Sro_3NeQs-_LdD4JL8cKJ3s4_bdyeKrSj17ULJvf_b-JNwUZ_skdK5r-KTgx9VjS41iU8wA=s800-w800-h400" alt="天開稲荷社">
-  <div class="body">
-    <h3>天開稲荷社 <span class="rec">おすすめ</span> <span class="stars">★4.5（844件）</span></h3>
-    <div class="desc">太宰府天満宮の末社で、九州最古のお稲荷さんとも言われる。本殿の奥から石段を登った先に鎮座し、連なる赤い鳥居のトンネルが美しい。十二支の鈴を鳴らして参拝するユニークな方式が特徴。奥の院まで足を延ばせば、開運・商売繁盛のパワースポットとしても知られる。往復約20分の軽いハイキング気分で楽しめる。</div>
-    <div class="meta"><span>📍 天満宮境内奥</span><span>🕐 6:30〜18:30</span><span>⏱ 往復約20分</span></div>
-  </div>
+<div class="spot-card" onclick="flyTo(4)">
+  <img src="https://lh3.googleusercontent.com/place-photos/AL8-SNEnGIclsFyjF8AvrtRGzJEL6Y0bLKlBpw9UBKSUBQIW1l4JxpqB4w8436qZXhJYgNiRU_gA0edUmYlrwSQQfjBQUEGMYdnu2URlUy4AC9AN5f4tvubDAbSZZ4KSdoDGdYh2o5AMixB8Nrhs=s4800-w800-h400" alt="九州国立博物館" loading="lazy">
+  <div class="body"><h3>九州国立博物館 <span class="badge" style="background:#38a169">おすすめ</span></h3>
+  <div class="desc">日本で4番目に設立された国立博物館。「日本文化の形成をアジア史的観点から捉える」というコンセプトのもと、日本・韓国・中国の歴史的な美術品を展示。曲面ガラスで覆われた外観は圧巻で、建物を見るだけでも訪れる価値あり。天満宮裏手から専用の動く歩道＆エスカレーターで直結。</div>
+  <div class="meta"><span>★ 4.3（9,839件）</span><span>水曜開館 9:30〜17:00</span><span>一般700円</span></div></div>
 </div>
 
-<div class="spot" onclick="flyTo(3)">
-  <img src="https://lh3.googleusercontent.com/place-photos/AL8-SNEnGIclsFyjF8AvrtRGzJEL6Y0bLKlBpw9UBKSUBQIW1l4JxpqB4w8436qZXhJYgNiRU_gA0edUmYlrwSQQfjBQUEGMYdnu2URlUy4AC9AN5f4tvubDAbSZZ4KSdoDGdYh2o5AMixB8Nrhs=s800-w800-h400" alt="九州国立博物館">
-  <div class="body">
-    <h3>九州国立博物館 <span class="rec">おすすめ</span> <span class="stars">★4.3（9,839件）</span></h3>
-    <div class="desc">日本で4番目の国立博物館。菊竹清訓設計の建物は、緑に囲まれた山の中にガラスの曲面が浮かぶ圧巻の外観。太宰府天満宮の裏手から専用エスカレーター通路で直結（徒歩約10分）。「日本文化の形成をアジア史的観点から捉える」をコンセプトに、常時800〜900点を展示。時間がなくても、外観の撮影だけで十分楽しめる。</div>
-    <div class="meta"><span>📍 太宰府市石坂4-7-2</span><span>🕐 9:30〜17:00（水曜開館）</span><span>💰 常設展 ¥700</span></div>
-  </div>
+<div class="spot-card" onclick="flyTo(5)">
+  <img src="https://lh3.googleusercontent.com/places/ANXAkqH_hS6lFOuRKS_dYDC7SFeUV451b2ZC3H6_43s__NOIHYTiJug92bwuBLVpZLz28FpKh4_moSR-5_Vwbfc5PY1N7YMxWGwLb0E=s4800-w800-h400" alt="ワンビル" loading="lazy">
+  <div class="body"><h3>ワンビル<span class="badge" style="background:#2b6cb0">2025年開業</span></h3>
+  <div class="desc">天神交差点の角に2025年4月にオープンした地上19階の大型複合ビル。「天神ビッグバン」再開発の中核。地下2階〜5階に約126店舗（蔦屋書店・メゾン キツネ・スパイラルガーデンなど話題テナントが集結）。6階スカイロビーは天神の街を一望できる開放的な空間で、隣接カフェで1杯購入すれば誰でも利用可能。西鉄福岡（天神）駅から徒歩2分。</div>
+  <div class="meta"><span>★ 3.9（497件）</span><span>平日11:00〜20:00 / 土日10:00〜20:00</span></div></div>
 </div>
 
-<div class="spot" onclick="flyTo(4)">
-  <img src="https://lh3.googleusercontent.com/place-photos/AL8-SNE8YMOhj0GbN57tw6GkYn-uGpJBRmhRJrvr3FplXMZAqA_y-KUah_FgaOj8FGTBplflP9jnSoFtRbW4LMNjZxhojKxAJqatiPQk_3xU3qY2qATV5OPepqdRZBYLHqnnelMTpqO88DI-v78SSg=s800-w800-h400" alt="宝満宮 竈門神社">
-  <div class="body">
-    <h3>宝満宮 竈門神社 <span class="rec">おすすめ</span> <span class="stars">★4.4（5,893件）</span></h3>
-    <div class="desc">太宰府天満宮の裏手、宝満山の麓に鎮座する縁結び・方除けの神様。スタイリッシュなガラス張りの授与所は、日本で最も美しい神社建築の一つとして話題。展望台から太宰府市街を一望でき、記念撮影にぴったり。「鬼滅の刃」の聖地としても人気で、竈門炭治郎の名前の由来ともされる。車で約10分。</div>
-    <div class="meta"><span>📍 太宰府市内山883</span><span>🕐 8:30〜18:00</span><span>🅿 ¥500</span></div>
-  </div>
-</div>
-
-<div class="spot" onclick="flyTo(5)">
-  <img src="https://lh3.googleusercontent.com/places/ANXAkqH_hS6lFOuRKS_dYDC7SFeUV451b2ZC3H6_43s__NOIHYTiJug92bwuBLVpZLz28FpKh4_moSR-5_Vwbfc5PY1N7YMxWGwLb0E=s800-w800-h400" alt="ONE FUKUOKA BLDG.">
-  <div class="body">
-    <h3>ONE FUKUOKA BLDG.（ワンビル） <span class="rec">おすすめ</span> <span class="stars">★3.9（497件）</span></h3>
-    <div class="desc">2025年4月開業、天神ビッグバンの中核をなす地上19階の大型複合ビル。B2〜5Fに約126店舗が集結し、蔦屋書店・Maison Kitsuné・SPIRAL GARDENなど話題のテナントが多数。6Fのスカイロビーは天神交差点を一望できる開放的な空間で、隣接カフェで飲み物を1杯購入すれば誰でも利用可能。天神地下街に直結しておりアクセスも抜群。</div>
-    <div class="meta"><span>📍 福岡市中央区天神1-11-1</span><span>🕐 11:00〜20:00（土日 10:00〜）</span></div>
-  </div>
-</div>
-
-<!-- ===== FOOD: LUNCH ===== -->
 <h2 style="--c:#c05621">ランチ＆食べ歩きグルメ</h2>
 
-<div class="food" onclick="flyToFood(0)">
-  <div class="row">
-    <img src="https://lh3.googleusercontent.com/place-photos/AL8-SNGV0Irw2eSxmEcxYW8VNCq2D-VVDOAdz26LfGK0jDM5iwQuWGMB3kSCPstiOLkWspqOVWC-W4ssV4_vIQUodqmNXE9G8EI7IoI0jdwWQ2ytGlwgY6ovi4CfEPODqNH96KGZDJ9enYi3gIky_w=s400-w400-h400" alt="筑紫庵">
-    <div class="body">
-      <h4><span class="cl cl-l">ランチ</span>筑紫庵 本店 <span class="stars">★3.9（454件）</span></h4>
-      <div class="menu">太宰府バーガー ¥600 ／ 合格バーガー ¥700 ／ 柚子塩からあげ ¥600</div>
-      <div class="desc">創業30年以上の老舗。梅ソース×鶏唐揚げの太宰府バーガーは九州ご当地バーガー選手権3位。バンズはカリッと、唐揚げはジューシー。</div>
-      <div class="rv">「観光地のバーガーと侮ってたけど、梅ソースとタルタルの組み合わせが絶妙。ボリュームもあって大満足」</div>
-    </div>
-  </div>
-</div>
+<div class="food-card" onclick="flyToFood(0)"><div class="fc-inner">
+  <img class="fc-img" src="https://lh3.googleusercontent.com/place-photos/AL8-SNGV0Irw2eSxmEcxYW8VNCq2D-VVDOAdz26LfGK0jDM5iwQuWGMB3kSCPstiOLkWspqOVWC-W4ssV4_vIQUodqmNXE9G8EI7IoI0jdwWQ2ytGlwgY6ovi4CfEPODqNH96KGZDJ9enYi3gIky_w=w400-h300" alt="筑紫庵" loading="lazy">
+  <div class="fc-body"><h4><span class="cl cl-l">ランチ</span>筑紫庵 本店 <span class="stars">★3.9 (454件)</span></h4>
+  <div class="menu">太宰府バーガー ¥600 ／ 合格バーガー ¥700 ／ 柚子塩からあげ ¥600</div>
+  <div class="desc">太宰府名物の梅ソース×自家製鶏唐揚げバーガー。九州ご当地バーガー選手権3位受賞。バンズには福岡産の石臼挽小麦を使用。</div>
+  <div class="rv">バンズがサクサク、中の梅ソースと鶏肉が絶妙に絡み合って最高。食べなきゃ損！</div></div>
+</div></div>
 
-<div class="food" onclick="flyToFood(1)">
-  <div class="row">
-    <img src="https://lh3.googleusercontent.com/places/ANXAkqGf6RDAdT_PsS-fJpLOcS7CmhG0XXvrCz0tBCFvdnff9j4-e9oHXVHcBV0skZhv8pucq1qj2ojJJ7s_-Ueub7aM5NFMY4w1tPA=s400-w400-h400" alt="YAMAYA BASE">
-    <div class="body">
-      <h4><span class="cl cl-l">ランチ</span>YAMAYA BASE DAZAIFU <span class="stars">★4.4（244件）</span></h4>
-      <div class="menu">明太フランス ¥500</div>
-      <div class="desc">明太子メーカー「やまや」直営の明太フランス専門店。注文後にオーブンで再加熱、外はカリカリ中はもちもち。太宰府店オリジナルの梅柄の袋もかわいい。</div>
-      <div class="rv">「焼きたてで外はサクサク、中はふわふわ。明太子の味がしっかりしてパンとの相性抜群！」</div>
-    </div>
-  </div>
-</div>
+<div class="food-card" onclick="flyToFood(1)"><div class="fc-inner">
+  <img class="fc-img" src="https://lh3.googleusercontent.com/places/ANXAkqGf6RDAdT_PsS-fJpLOcS7CmhG0XXvrCz0tBCFvdnff9j4-e9oHXVHcBV0skZhv8pucq1qj2ojJJ7s_-Ueub7aM5NFMY4w1tPA=w400-h300" alt="やまやベース" loading="lazy">
+  <div class="fc-body"><h4><span class="cl cl-l">ランチ</span>やまやベース 太宰府 <span class="stars">★4.4 (244件)</span></h4>
+  <div class="menu">明太フランス ¥500</div>
+  <div class="desc">辛子明太子メーカー「やまや」直営。注文後にオーブンで焼き直し、アツアツで提供。太宰府店限定の梅柄袋も可愛い。</div>
+  <div class="rv">温かくてサクサクのバゲット、中はふわふわで明太子の風味が最高！</div></div>
+</div></div>
 
-<div class="food" onclick="flyToFood(2)">
-  <div class="row">
-    <img src="https://lh3.googleusercontent.com/place-photos/AL8-SNH-RE8vOLmUijgkQujenDjecYPe-4Cnsoyg5u57Y9RaSci8-CG88yg1mWXfG8PpTJsz1gpQtqUsg1IjXj0NCmwyltik2Of1M_zMR-xP5iOaK5T-esvXHuhY2UXqAzMDqX8WiDiPzcSPWPhawg=s400-w400-h400" alt="白梅堂">
-    <div class="body">
-      <h4><span class="cl cl-l">ランチ</span>白梅堂 <span class="stars">★3.8（46件）</span></h4>
-      <div class="menu">豚角煮まんじゅう ¥550 ／ 五角形・合格カステラ</div>
-      <div class="desc">とろとろの角煮をふわふわの皮で包んだ名物肉まん。五角形の合格カステラは受験生に人気の縁起物。参道入り口すぐ。</div>
-      <div class="rv">「角煮がとろけるほど柔らかく、生地もふわふわで甘い。少し高めだけど観光地価格としては納得」</div>
-    </div>
-  </div>
-</div>
+<div class="food-card" onclick="flyToFood(2)"><div class="fc-inner">
+  <img class="fc-img" src="https://lh3.googleusercontent.com/place-photos/AL8-SNH-RE8vOLmUijgkQujenDjecYPe-4Cnsoyg5u57Y9RaSci8-CG88yg1mWXfG8PpTJsz1gpQtqUsg1IjXj0NCmwyltik2Of1M_zMR-xP5iOaK5T-esvXHuhY2UXqAzMDqX8WiDiPzcSPWPhawg=w400-h300" alt="白梅堂" loading="lazy">
+  <div class="fc-body"><h4><span class="cl cl-l">ランチ</span>白梅堂 <span class="stars">★3.8 (46件)</span></h4>
+  <div class="menu">豚角煮まんじゅう ¥550 ／ 五角形・合格カステラ</div>
+  <div class="desc">とろとろの角煮をふわふわの生地で包んだ肉まん。五角形の合格カステラは受験生への縁起物としても人気。</div>
+  <div class="rv">角煮がとろける柔らかさ、皮もふわふわで美味しい。人気店なので少し並びますが価値あり</div></div>
+</div></div>
 
-<div class="food">
-  <div class="row">
-    <img src="https://lh3.googleusercontent.com/place-photos/AL8-SNEj30_v6mEJ7CiVbnytgMmSNFKDDiyphVZNVF8pUpn0EGO8ktppjIHNui1AQ4xxl4N9MeVbO6Qdg6uMwKqFFlh9xKZ6iTAgyFEZRINX_XyyAVvE2s_vozJm8b42teTH4x5t7-J7O1E5seeoyA=s400-w400-h400" alt="梅ヶ枝餅">
-    <div class="body">
-      <h4><span class="cl cl-l">ランチ</span>かさの家 <span class="stars">★4.1</span></h4>
-      <div class="menu">梅ヶ枝餅 ¥130/個</div>
-      <div class="desc">太宰府名物の王道。小豆あんを薄い餅皮で包んで焼き上げた太宰府を代表する銘菓。茶房ギャラリーも併設で、店内で抹茶と一緒にいただくのもおすすめ。</div>
-      <div class="rv">「いつもここで買います。ここのが一番美味しい。梅ヶ枝餅は出来立て以外は美味しくないです」</div>
-    </div>
-  </div>
-</div>
+<div class="food-card"><div class="fc-inner">
+  <img class="fc-img" src="https://lh3.googleusercontent.com/place-photos/AL8-SNGPnCWBIXSFn6QuEyHaPfc3v4SmbrEBihbKxzRuKKROe2hZ8SEbRvcl6MiKrwc4m8A-coI5OOI3viKnXrnK_kdjTiqF26x7rHnEAXy2iRVNizvKiXSZ5GJN_2o2uBAR8wr-nb19BvuNnFqWrysMKvrLCQ=w400-h300" alt="かさの家" loading="lazy">
+  <div class="fc-body"><h4><span class="cl cl-l">ランチ</span>かさの家 <span class="stars">★4.1</span></h4>
+  <div class="menu">梅ヶ枝餅 ¥130/個</div>
+  <div class="desc">太宰府名物の王道。あんこ入りの焼き餅を鉄板で焼きたて提供。参道で最も有名な老舗の一つ。併設の茶房で抹茶と一緒に楽しむことも可能。</div>
+  <div class="rv">いつもここで買います。ここのが一番美味しい。梅ヶ枝餅は出来立てでないと美味しくないです</div></div>
+</div></div>
 
-<!-- ===== FOOD: SWEETS & CAFE ===== -->
 <h2 style="--c:#ed8936">スイーツ＆カフェ</h2>
 
-<div class="food" onclick="flyToFood(3)">
-  <div class="row">
-    <img src="https://lh3.googleusercontent.com/place-photos/AL8-SNGCzS-JfVB_WBSsK1wmNz9ykLJggH0RhmczTNNURX6kXtMIwCYTyUkH4CuenVuPS2EKiDYzvAepKN0baGOXnyrqF7uVsvpC4s9WypGtOk_7U7HSO8Ax-L_ShMKlARpRZgatd0j6Y4I4HG98=s400-w400-h400" alt="小鳥居茶房">
-    <div class="body">
-      <h4><span class="cl cl-s">スイーツ</span>小鳥居茶房 <span class="stars">★3.3（98件）</span></h4>
-      <div class="menu">生プリンアイス（カスタード）¥580 ／（抹茶）¥680</div>
-      <div class="desc">築100年超の古民家をリノベしたカフェ。アルミ容器を手で温めてから外すと、プリン型のアイスクリームが出現するユニークな食べ歩きスイーツ。</div>
-      <div class="rv">「手で温めてから外すと綺麗なプリン型に！濃厚なプリン味で、特にカスタードが美味しかった」</div>
-    </div>
-  </div>
-</div>
+<div class="food-card" onclick="flyToFood(3)"><div class="fc-inner">
+  <img class="fc-img" src="https://lh3.googleusercontent.com/place-photos/AL8-SNGCzS-JfVB_WBSsK1wmNz9ykLJggH0RhmczTNNURX6kXtMIwCYTyUkH4CuenVuPS2EKiDYzvAepKN0baGOXnyrqF7uVsvpC4s9WypGtOk_7U7HSO8Ax-L_ShMKlARpRZgatd0j6Y4I4HG98=w400-h300" alt="小鳥居茶房" loading="lazy">
+  <div class="fc-body"><h4><span class="cl cl-s">スイーツ</span>小鳥居茶房 <span class="stars">★3.3 (98件)</span></h4>
+  <div class="menu">生プリンアイス（カスタード）¥580 ／（抹茶）¥680</div>
+  <div class="desc">築100年の古民家をリノベしたカフェ。アルミ容器から取り外すとプリン型のアイスが出現。インスタ映え◎</div>
+  <div class="rv">手で温めてから外すと綺麗なプリン型になる！濃厚なプリン味でとても美味しかった</div></div>
+</div></div>
 
-<div class="food" onclick="flyToFood(4)">
-  <div class="row">
-    <img src="https://lh3.googleusercontent.com/place-photos/AL8-SNEv2SlvYId3Y17koc6nxH1OxfXvKoBjGqC8mRbd-NqxpdyNBKLIAdRy3I-MWp6EKKxE8QTa04_w9xotrxNyIfK1TXMgd2zktksCIUZtrtzq9fapVtxikEQBc8GNMO-qSYVpcZ_SW_rVmg6YeoPYDinwgg=s400-w400-h400" alt="coba cafe">
-    <div class="body">
-      <h4><span class="cl cl-s">スイーツ</span>coba cafe <span class="stars">★4.1（419件）</span></h4>
-      <div class="menu">季節のパフェ ／ 自家製プリン ／ カレーセット</div>
-      <div class="desc">参道から少し入った隠れ家カフェ。季節限定フルーツパフェが話題で、盛り付けも味も抜群。ランチプレートやカレーもあり、しっかり食事もできる。</div>
-      <div class="rv">「観光地の喧騒から離れた静かな空間。デザートはテクスチャーも層も凝っていて美味しい」</div>
-    </div>
-  </div>
-</div>
+<div class="food-card" onclick="flyToFood(4)"><div class="fc-inner">
+  <img class="fc-img" src="https://lh3.googleusercontent.com/place-photos/AL8-SNEv2SlvYId3Y17koc6nxH1OxfXvKoBjGqC8mRbd-NqxpdyNBKLIAdRy3I-MWp6EKKxE8QTa04_w9xotrxNyIfK1TXMgd2zktksCIUZtrtzq9fapVtxikEQBc8GNMO-qSYVpcZ_SW_rVmg6YeoPYDinwgg=w400-h300" alt="コバカフェ" loading="lazy">
+  <div class="fc-body"><h4><span class="cl cl-s">スイーツ</span>コバカフェ <span class="stars">★4.1 (419件)</span></h4>
+  <div class="menu">季節のパフェ ／ 自家製プリン ／ カレーセット</div>
+  <div class="desc">参道から少し入った隠れ家カフェ。季節限定のフルーツパフェが人気。ランチプレートやカレーセットもあり、ゆっくり座って食べたい方におすすめ。</div>
+  <div class="rv">観光地の賑やかさから離れた静かな空間。デザートの完成度が高く、食感も味も素晴らしい</div></div>
+</div></div>
 
-<div class="food" onclick="flyToFood(5)">
-  <div class="row">
-    <img src="https://lh3.googleusercontent.com/place-photos/AL8-SNHziZCuAVrB3_I7nbiB1rkF4a_Bnxb38V-mly399XExBTXbomUDItDPvKHsYOMjHz_TSp26ZnWOzmI7iSS4QhnpbMpOpJmWEriV7NZzwnRMExeeEnjFokuyUTdAyCX6NDZst0dJm_byM6ujgsg=s400-w400-h400" alt="Starbucks 太宰府">
-    <div class="body">
-      <h4><span class="cl cl-c">カフェ</span>スターバックス 太宰府天満宮表参道店 <span class="stars">★4.3（3,627件）</span></h4>
-      <div class="menu">店舗限定メニュー各種 ／ 抹茶ラテ ／ マラサダ</div>
-      <div class="desc">建築家・隈研吾氏が設計した世界的に有名な特別店舗。約2,000本の木材を釘を使わずに組み合わせたインテリアは圧巻。参道沿いでアクセス抜群、店内は広くサービスも迅速。</div>
-      <div class="rv">「木組みのデザインが圧倒的に美しい。他のスタバとは全く違う空間で、コーヒーもいつもより美味しく感じる」</div>
-    </div>
-  </div>
-</div>
+<div class="food-card" onclick="flyToFood(5)"><div class="fc-inner">
+  <img class="fc-img" src="https://lh3.googleusercontent.com/place-photos/AL8-SNHziZCuAVrB3_I7nbiB1rkF4a_Bnxb38V-mly399XExBTXbomUDItDPvKHsYOMjHz_TSp26ZnWOzmI7iSS4QhnpbMpOpJmWEriV7NZzwnRMExeeEnjFokuyUTdAyCX6NDZst0dJm_byM6ujgsg=w400-h300" alt="スターバックス太宰府" loading="lazy">
+  <div class="fc-body"><h4><span class="cl cl-c">カフェ</span>スターバックス 太宰府天満宮表参道店 <span class="stars">★4.3 (3,627件)</span></h4>
+  <div class="menu">店舗限定メニュー ／ 抹茶ラテ ／ マラサダ</div>
+  <div class="desc">建築家・隈研吾氏が設計した特別店舗。約2,000本の杉材を組み合わせた斬新なインテリアが国内外で話題。参道のシンボル的存在。</div>
+  <div class="rv">木組みのデザインが圧巻。サービスも早く丁寧。今まで訪れた中で最も美しいスターバックス</div></div>
+</div></div>
 
-<!-- ===== NOTES ===== -->
-<div class="notes">
-  <strong>📝 備考・注意事項</strong><br>
-  ・仮殿は2026年5月上旬まで。今しか見られない貴重な建築！<br>
-  ・竈門神社の駐車場は¥500（現金のみの場合あり）<br>
-  ・ワンビル6Fスカイロビーはカフェで飲み物を1杯購入で利用可能<br>
-  ・17:30までにホテルで荷物回収 → 給油 → レンタカー返却<br>
-  ・福岡空港は天神から車で約20分。余裕あり
+<div class="notes-box">
+  <strong>備考・注意事項</strong><br>
+  ・仮殿は2026年5月上旬まで。今しか見られない期間限定建築！<br>
+  ・荷物はホテルフロントに預けて身軽に移動<br>
+  ・西鉄急行は毎時18分・48分に天神発（太宰府直通）<br>
+  ・帰りは太宰府→西鉄二日市で乗り換え→天神（約35分）<br>
+  ・ワンビル6階スカイロビーはカフェで1杯購入すれば利用可能<br>
+  ・福岡空港へは地下鉄で唐人町から直通約15分
 </div>
-
-</div><!-- .wrap -->
+</div>
 
 <script>
 const spots=[
-  {name:"平和台ホテル5",lat:33.58907,lng:130.36858,color:"#1a365d",desc:"出発・帰着ポイント",time:"~10:30/17:30",gm:"https://maps.google.com/?q=Heiwadai+Hotel+5+Fukuoka"},
-  {name:"太宰府天満宮（仮殿）",lat:33.5214,lng:130.5348,color:"#c53030",desc:"藤本壮介設計の仮殿。2026年5月まで限定",time:"~11:00",gm:"https://maps.google.com/?q=Dazaifu+Tenmangu+Shrine"},
-  {name:"天開稲荷社",lat:33.52297,lng:130.53792,color:"#38a169",desc:"赤い鳥居のトンネル。往復約20分",time:"~12:30",gm:"https://maps.google.com/?q=Tenkai+Inari+Shrine+Dazaifu"},
-  {name:"九州国立博物館",lat:33.51826,lng:130.53812,color:"#38a169",desc:"水曜開館 9:30-17:00。ガラス張りの外観が圧巻",time:"~13:00",gm:"https://maps.google.com/?q=Kyushu+National+Museum"},
-  {name:"宝満宮 竈門神社",lat:33.52884,lng:130.55253,color:"#ed8936",desc:"縁結び・方除けの神様（駐車場¥500）",time:"~13:30",gm:"https://maps.google.com/?q=Kamado+Shrine+Dazaifu"},
-  {name:"ONE FUKUOKA BLDG.",lat:33.59115,lng:130.39945,color:"#2b6cb0",desc:"2025年開業。6Fスカイロビーから天神を一望",time:"~15:00",gm:"https://maps.google.com/?q=ONE+FUKUOKA+BLDG+Tenjin"},
-  {name:"福岡空港（国内線）",lat:33.5946,lng:130.44972,color:"#718096",desc:"18:20集合。東京へ帰還",time:"18:20",gm:"https://maps.google.com/?q=Fukuoka+Airport+Domestic"},
+  {name:"平和台ホテル5",lat:33.58907,lng:130.36858,color:"#1a365d",desc:"出発・帰着ポイント（荷物預け）",time:"~10:30 / ~16:30",gm:"https://maps.google.com/?q=Heiwadai+Hotel+5+Fukuoka"},
+  {name:"西鉄福岡（天神）駅",lat:33.5905,lng:130.3990,color:"#2b6cb0",desc:"西鉄の始発駅。急行で太宰府へ直通28分",time:"~10:45",gm:"https://maps.google.com/?q=Nishitetsu+Fukuoka+Tenjin+Station"},
+  {name:"太宰府天満宮（仮殿）",lat:33.5214,lng:130.5348,color:"#c53030",desc:"藤本壮介設計の仮殿。2026年5月まで限定",time:"~11:30",gm:"https://maps.google.com/?q=Dazaifu+Tenmangu+Shrine"},
+  {name:"天開稲荷社",lat:33.52297,lng:130.53792,color:"#38a169",desc:"赤い鳥居のトンネル。往復約20分",time:"~13:00",gm:"https://maps.google.com/?q=Tenkai+Inari+Shrine+Dazaifu"},
+  {name:"九州国立博物館",lat:33.51826,lng:130.53812,color:"#38a169",desc:"水曜開館 9:30〜17:00",time:"~13:30",gm:"https://maps.google.com/?q=Kyushu+National+Museum"},
+  {name:"ワンビル（天神）",lat:33.59115,lng:130.39945,color:"#2b6cb0",desc:"2025年開業。6階スカイロビー",time:"~15:00",gm:"https://maps.google.com/?q=ONE+FUKUOKA+BLDG+Tenjin"},
+  {name:"福岡空港",lat:33.5946,lng:130.44972,color:"#718096",desc:"18:20集合",time:"18:20",gm:"https://maps.google.com/?q=Fukuoka+Airport+Domestic"},
 ];
 const foods=[
   {name:"筑紫庵 本店",lat:33.519707,lng:130.53239,item:"太宰府バーガー ¥600"},
-  {name:"YAMAYA BASE",lat:33.519727,lng:130.53137,item:"明太フランス ¥500"},
+  {name:"やまやベース",lat:33.519727,lng:130.53137,item:"明太フランス ¥500"},
   {name:"白梅堂",lat:33.51965,lng:130.53268,item:"豚角煮まん ¥550"},
   {name:"小鳥居茶房",lat:33.5205,lng:130.5326,item:"生プリンアイス ¥580〜"},
-  {name:"coba cafe",lat:33.518967,lng:130.53231,item:"季節のパフェ"},
+  {name:"コバカフェ",lat:33.518967,lng:130.53231,item:"季節のパフェ"},
   {name:"スターバックス 太宰府",lat:33.51972,lng:130.53337,item:"隈研吾設計の特別店舗"},
 ];
 const map=L.map('map').setView([33.56,130.46],12);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:18}).addTo(map);
-const rc=spots.map(s=>[s.lat,s.lng]);rc.splice(6,0,[spots[0].lat,spots[0].lng]);
-L.polyline(rc,{color:'#2b6cb0',weight:3,opacity:.45,dashArray:'8,6'}).addTo(map);
-L.rectangle([[33.515,130.525],[33.535,130.558]],{color:'#c53030',weight:1.5,fillOpacity:.03,dashArray:'5,5'}).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap',maxZoom:18}).addTo(map);
+// Train route (conceptual line)
+const rc=[[spots[0].lat,spots[0].lng],[spots[1].lat,spots[1].lng],[spots[2].lat,spots[2].lng],[spots[3].lat,spots[3].lng],[spots[4].lat,spots[4].lng]];
+const rc2=[[spots[2].lat,spots[2].lng],[spots[1].lat,spots[1].lng],[spots[5].lat,spots[5].lng],[spots[0].lat,spots[0].lng],[spots[6].lat,spots[6].lng]];
+L.polyline(rc,{color:'#c53030',weight:3,opacity:.4,dashArray:'8,6'}).addTo(map);
+L.polyline(rc2,{color:'#2b6cb0',weight:3,opacity:.4,dashArray:'8,6'}).addTo(map);
+// Dazaifu area
+L.rectangle([[33.515,130.525],[33.535,130.545]],{color:'#c53030',weight:1.5,fillOpacity:.03,dashArray:'5,5'}).addTo(map);
 const markers=spots.map((s,i)=>{
-  const ic=L.divIcon({html:`<div style="width:26px;height:26px;border-radius:50%;background:${s.color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;box-shadow:0 2px 5px rgba(0,0,0,.3);border:2px solid #fff">${i+1}</div>`,className:'',iconSize:[26,26],iconAnchor:[13,13]});
+  const ic=L.divIcon({html:'<div style="width:26px;height:26px;border-radius:50%;background:'+s.color+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;box-shadow:0 2px 5px rgba(0,0,0,.3);border:2px solid #fff">'+(i+1)+'</div>',className:'',iconSize:[26,26],iconAnchor:[13,13]});
   const m=L.marker([s.lat,s.lng],{icon:ic}).addTo(map);
-  m.bindPopup(`<div class="popup-title">${s.name}</div><div class="popup-sub">${s.time}｜${s.desc}</div><div class="popup-link"><a href="${s.gm}" target="_blank">📍 Google Mapsで開く</a></div>`,{maxWidth:250});
+  m.bindPopup('<div class="popup-title">'+s.name+'</div><div class="popup-sub">'+s.time+'｜'+s.desc+'</div><div class="popup-link"><a href="'+s.gm+'" target="_blank">📍 マップで開く</a></div>',{maxWidth:250});
   return m;
 });
 const foodMarkers=foods.map(f=>{
-  const ic=L.divIcon({html:`<div style="width:12px;height:12px;border-radius:50%;background:#ed8936;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>`,className:'',iconSize:[12,12],iconAnchor:[6,6]});
-  return L.marker([f.lat,f.lng],{icon:ic}).addTo(map).bindPopup(`<b>${f.name}</b><br>${f.item}`);
+  const ic=L.divIcon({html:'<div style="width:12px;height:12px;border-radius:50%;background:#ed8936;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>',className:'',iconSize:[12,12],iconAnchor:[6,6]});
+  return L.marker([f.lat,f.lng],{icon:ic}).addTo(map).bindPopup('<b>'+f.name+'</b><br>'+f.item);
 });
 map.fitBounds(spots.map(s=>[s.lat,s.lng]),{padding:[30,30]});
 function flyTo(i){map.flyTo([spots[i].lat,spots[i].lng],i>=5?14:15,{duration:.8});markers[i].openPopup();window.scrollTo({top:0,behavior:'smooth'})}
