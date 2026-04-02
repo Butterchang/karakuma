@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鎌倉・江之島・橫濱 一日遊 7人版</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans TC','Hiragino Sans',sans-serif;background:#f0f4f8;color:#1a202c;-webkit-font-smoothing:antialiased}
+
+/* ─── Header ─── */
+.hd{background:linear-gradient(135deg,#0f2044,#1a4a8a,#2b6cb0);color:#fff;padding:16px 16px 12px;position:sticky;top:0;z-index:1000;box-shadow:0 3px 12px rgba(0,0,0,.3)}
+.hd h1{font-size:16px;font-weight:800;letter-spacing:.5px}
+.hd .sub{font-size:10.5px;opacity:.8;margin-top:3px}
+.hd .chips{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.hd .chip{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:2px 10px;font-size:9.5px;font-weight:600}
+
+#map{width:100%;height:50vh;min-height:300px}
+.wrap{max-width:700px;margin:0 auto;padding:12px 13px 30px}
+
+/* ─── Section titles ─── */
+h2{font-size:13.5px;font-weight:800;border-left:4px solid var(--c,#c53030);padding-left:10px;margin:22px 0 10px;color:#1a202c}
+.sec-label{display:inline-block;padding:3px 12px;border-radius:20px;font-size:9.5px;font-weight:700;color:#fff;margin:18px 0 8px;letter-spacing:.6px}
+
+/* ─── Warning box ─── */
+.warn{background:#fffbeb;border:1.5px solid #f6e05e;border-radius:10px;padding:12px 14px;font-size:11.5px;color:#744210;line-height:1.75;margin:10px 0 14px}
+.warn strong{font-size:12.5px;color:#5f3200;display:block;margin-bottom:4px}
+
+/* ─── Transport block ─── */
+.tb{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.08);overflow:hidden;margin:8px 0 16px}
+.tb-hd{padding:11px 14px;font-size:12px;font-weight:800;color:#fff}
+.tb-body{padding:12px 14px}
+.leg{display:flex;align-items:flex-start;gap:0}
+.leg-line{display:flex;flex-direction:column;align-items:center;margin-right:12px;flex-shrink:0;padding-top:2px}
+.ldot{width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--lc,#2b6cb0);box-shadow:0 0 0 2px var(--lc,#2b6cb0);flex-shrink:0}
+.lbar{width:3px;background:var(--lc,#2b6cb0);flex:1;min-height:52px;margin:3px 5.5px}
+.lc{flex:1;padding-bottom:16px;min-width:0}
+.lstation{font-size:13px;font-weight:800;color:#1a202c;margin-bottom:3px}
+.ldetail{font-size:10.5px;color:#718096;line-height:1.6}
+.lbadge{display:inline-block;font-size:9.5px;font-weight:700;color:#fff;background:var(--lc,#2b6cb0);border-radius:4px;padding:1px 8px;margin-top:3px}
+.lplat{display:inline-block;font-size:9px;font-weight:700;background:#fef3c7;color:#92400e;border:1px solid #fbbf24;border-radius:4px;padding:1px 7px;margin-left:4px}
+.ltime{font-size:13px;font-weight:800;color:var(--lc,#2b6cb0)}
+.ldur{font-size:10px;color:#a0aec0;margin-left:5px}
+.tip-box{background:#ebf8ff;border:1px solid #bee3f8;border-radius:7px;padding:7px 10px;font-size:10.5px;color:#2b6cb0;margin-top:6px;line-height:1.55}
+
+/* ─── Timeline ─── */
+.stop{display:flex;gap:10px;margin-bottom:8px;background:#fff;border-radius:10px;padding:11px 13px;box-shadow:0 1px 5px rgba(0,0,0,.06);border-left:4px solid var(--c,#2b6cb0);cursor:pointer;transition:transform .12s}
+.stop:active{transform:scale(.98)}
+.stop .t{min-width:46px;font-weight:800;font-size:12px;color:var(--c);flex-shrink:0}
+.stop h3{font-size:13px;font-weight:700;margin-bottom:2px}
+.stop p{font-size:11px;color:#718096;line-height:1.55}
+.tag{display:inline-block;font-size:9px;color:#fff;background:var(--c);border-radius:4px;padding:1px 7px;margin-top:4px;font-weight:700}
+.rec{display:inline-block;font-size:9px;color:#ed8936;border:1px solid #ed8936;border-radius:3px;padding:0 5px;margin-left:5px;font-weight:700;vertical-align:middle}
+
+/* ─── Spot cards ─── */
+.spot-card{background:#fff;border-radius:14px;overflow:hidden;margin-bottom:13px;box-shadow:0 2px 10px rgba(0,0,0,.08);cursor:pointer;transition:transform .14s}
+.spot-card:active{transform:scale(.98)}
+.sp-wrap{position:relative;width:100%;height:190px;overflow:hidden}
+.sp-img{width:100%;height:100%;object-fit:cover;display:block}
+.sp-grad{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-size:64px}
+.sp-badge{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.55);color:#fff;font-size:9.5px;font-weight:700;padding:3px 10px;border-radius:20px;backdrop-filter:blur(4px)}
+.spot-card .bd{padding:13px 14px}
+.spot-card h3{font-size:14px;font-weight:800;margin-bottom:5px}
+.spot-card .name-jp{font-size:10.5px;color:#a0aec0;font-weight:400;margin-bottom:5px}
+.spot-card .desc{font-size:11.5px;color:#4a5568;line-height:1.65}
+.spot-card .meta{font-size:10.5px;color:#a0aec0;margin-top:8px;display:flex;gap:14px;flex-wrap:wrap}
+.spot-card .meta span{display:flex;align-items:center;gap:3px}
+
+/* ─── Shop grid ─── */
+.shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.shop-card{background:#fff;border-radius:11px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.08);cursor:pointer;transition:transform .13s}
+.shop-card:active{transform:scale(.97)}
+.sh-wrap{position:relative;width:100%;height:115px;overflow:hidden}
+.sh-img{width:100%;height:100%;object-fit:cover;display:block}
+.sh-grad{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-size:38px}
+.sh-cat{position:absolute;top:7px;left:7px;font-size:8px;font-weight:700;color:#fff;padding:2px 7px;border-radius:20px}
+.shop-card .sb{padding:9px 10px}
+.shop-card h4{font-size:11.5px;font-weight:700;margin-bottom:2px}
+.shop-card .sname-jp{font-size:9.5px;color:#a0aec0;margin-bottom:3px}
+.shop-card .sdesc{font-size:10.5px;color:#718096;line-height:1.45}
+.shop-card .sprice{font-size:10.5px;color:#c05621;font-weight:700;margin-top:4px}
+
+/* ─── Food cards ─── */
+.food-card{background:#fff;border:1px solid #e8edf2;border-radius:11px;overflow:hidden;margin-bottom:10px;box-shadow:0 1px 5px rgba(0,0,0,.06);cursor:pointer;transition:transform .13s}
+.food-card:active{transform:scale(.98)}
+.fc-inner{display:flex}
+.fc-wrap{position:relative;width:115px;min-height:108px;flex-shrink:0;overflow:hidden}
+.fc-img{width:100%;height:100%;object-fit:cover;display:block}
+.fc-grad{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-size:36px}
+.fc-body{padding:10px 12px;flex:1;min-width:0}
+.food-card h4{font-size:12.5px;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.food-card .name-jp{font-size:9.5px;color:#a0aec0}
+.stars{color:#f6ad55;font-size:10.5px;font-weight:700}
+.menu{font-size:11.5px;color:#c05621;font-weight:700;margin:4px 0}
+.fc-body .desc{font-size:10.5px;color:#718096;line-height:1.5}
+.rv{font-size:10px;color:#a0aec0;margin-top:5px;padding-top:5px;border-top:1px solid #f0f0f0;line-height:1.45;font-style:italic}
+.rv::before{content:"💬 ";font-style:normal}
+.gnote{font-size:9.5px;background:#f0fff4;color:#276749;border:1px solid #9ae6b4;border-radius:4px;padding:2px 8px;margin-top:5px;font-weight:600;display:inline-block}
+
+/* ─── Category labels ─── */
+.cl{display:inline-block;font-size:8.5px;border-radius:3px;padding:1px 6px;font-weight:700;color:#fff;flex-shrink:0}
+.cl-l{background:#c53030}.cl-d{background:#553c9a}.cl-s{background:#ed8936}.cl-c{background:#2b6cb0}.cl-k{background:#276749}
+
+/* ─── Notes ─── */
+.notes{background:#ebf8ff;border:1px solid #bee3f8;border-radius:10px;padding:13px 14px;font-size:11.5px;color:#2b6cb0;line-height:1.8;margin:14px 0 30px}
+.notes strong{font-size:12.5px;color:#1a365d;display:block;margin-bottom:6px}
+.notes li{margin-left:16px;margin-bottom:2px}
+
+/* ─── Divider ─── */
+.dv{border:none;border-top:2px dashed #dee5ee;margin:20px 0}
+
+/* ─── Popup ─── */
+.popup-title{font-weight:700;font-size:13px;margin-bottom:2px}
+.popup-sub{font-size:11px;color:#718096}
+.popup-link a{color:#2b6cb0;font-size:10px;text-decoration:none}
+
+@media(max-width:480px){
+  .fc-wrap{width:90px;min-height:90px}
+  .sp-wrap{height:155px}
+  .sh-wrap{height:95px}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════ HEADER ════════════════════ -->
+<div class="hd">
+  <h1>🌊 鎌倉（かまくら）・江之島（えのしま）・橫濱（よこはま）一日遊</h1>
+  <div class="sub">從東新宿（ひがししんじゅく）出發 ／ 古都 → 海島 → 夜景 全制霸</div>
+  <div class="chips">
+    <span class="chip">👥 7人同行</span>
+    <span class="chip">🚃 全程電車</span>
+    <span class="chip">⏰ 約 14 小時</span>
+    <span class="chip">💴 預算 ¥5,000–8,000/人</span>
+  </div>
+</div>
+
+<div id="map"></div>
+
+<div class="wrap">
+
+<!-- ════════════ 7人注意 ════════════ -->
+<div class="warn">
+  <strong>⚠️ 7人同行特別注意事項</strong>
+  ・ 午餐（白魚料理とびっちょ）、晚餐（MANGIA MANGIA）請提前電話預約，7人以上一定要告知人數<br>
+  ・ 江之島電車（江ノ電，えのでん）假日非常擁擠，7人可能需分批等候 2–3 班<br>
+  ・ 橫濱地標塔（ランドマークタワー）展望台可容納 7 人同時入場，無需分批<br>
+  ・ 各景點購票環節：建議 1–2 人先去排隊，其他人在附近等候或先拍照
+</div>
+
+<!-- ════════════ 去程交通 ════════════ -->
+<h2 style="--c:#1a4a8a">🚃 去程交通：東新宿 → 鎌倉</h2>
+<p style="font-size:11px;color:#718096;margin-bottom:8px">全程約 80 分鐘 ／ 費用約 ¥880/人（使用 IC 卡）</p>
+
+<div class="tb">
+  <div class="tb-hd" style="background:linear-gradient(90deg,#1a4a8a,#2b6cb0)">去程 · 3次轉乘　推薦 7:20 出發</div>
+  <div class="tb-body">
+
+    <div class="leg" style="--lc:#9f7aea">
+      <div class="leg-line"><div class="ldot" style="--lc:#9f7aea"></div><div class="lbar" style="background:#9f7aea"></div></div>
+      <div class="lc">
+        <div class="lstation">東新宿站（ひがししんじゅく） 出發</div>
+        <div class="ldetail">
+          東京地鐵 副都心線（ふくとしんせん）<br>
+          <span class="lbadge" style="background:#9f7aea">急行・渋谷（しぶや）方向</span>
+          <span class="lplat">搭乘月台：F-12號線</span><br>
+          <span class="ltime">約 5 分鐘</span><span class="ldur">（車資 ¥210 含入涉谷）</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="leg" style="--lc:#e53e3e">
+      <div class="leg-line"><div class="ldot" style="--lc:#e53e3e"></div><div class="lbar" style="background:#e53e3e"></div></div>
+      <div class="lc">
+        <div class="lstation">涉谷站（しぶや）轉乘</div>
+        <div class="ldetail">
+          ✅ 副都心線月台（地下5層）與東急東橫線（とうきゅうとうよこせん）<strong>同一月台</strong>，無需出閘直接換乘！<br>
+          東急東橫線
+          <span class="lbadge" style="background:#e53e3e">特急・橫濱（よこはま）方向</span>
+          <span class="lplat">3・4號線（地下5層）</span><br>
+          <span class="ltime">約 28 分鐘</span><span class="ldur">（車資 ¥280）</span>
+        </div>
+        <div class="tip-box">💡 涉谷轉乘小技巧：副都心線下車後，在同一層（B5F）月台對面方向就是東橫線，看到「橫濱・元町・中華街方向」直接走過去即可。</div>
+      </div>
+    </div>
+
+    <div class="leg" style="--lc:#2b6cb0">
+      <div class="leg-line"><div class="ldot" style="--lc:#2b6cb0"></div><div class="lbar" style="background:#2b6cb0"></div></div>
+      <div class="lc">
+        <div class="lstation">橫濱站（よこはま）轉乘</div>
+        <div class="ldetail">
+          出東橫線閘後，跟著「JR 乘り換え」指示步行約 5 分鐘<br>
+          JR 橫須賀線（よこすかせん）
+          <span class="lbadge" style="background:#2b6cb0">鎌倉・逗子（ずし）方向</span>
+          <span class="lplat">JR 3號線</span><br>
+          <span class="ltime">約 27 分鐘</span><span class="ldur">（車資 ¥360）</span>
+        </div>
+        <div class="tip-box">💡 橫濱轉乘：東橫線是私鐵，JR 是另一套系統，需重新感應 IC 卡入閘。跟著「JR 乗り換え」（JR 換乘）指標走，往 3 號月台即可。</div>
+      </div>
+    </div>
+
+    <div class="leg" style="--lc:#c53030">
+      <div class="leg-line"><div class="ldot" style="--lc:#c53030"></div></div>
+      <div class="lc">
+        <div class="lstation">鎌倉站（かまくら）抵達 <span style="color:#718096;font-size:11px">約 8:50</span></div>
+        <div class="ldetail">東口（ひがしぐち）→ 鶴岡八幡宮（つるがおかはちまんぐう）方向 ／ 西口（にしぐち）→ 江之島電車（えのでん）・長谷寺（はせでら）方向</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 鎌倉內移動 -->
+<h2 style="--c:#38a169">🚋 鎌倉內部移動：江之島電車（江ノ電，えのでん）</h2>
+
+<div class="tb">
+  <div class="tb-hd" style="background:linear-gradient(90deg,#276749,#38a169)">江之島電車路線　IC 卡可用 ／ 一日乘車券「のりおりくん」¥800（超過 4 次即回本）</div>
+  <div class="tb-body">
+
+    <div class="leg" style="--lc:#38a169">
+      <div class="leg-line"><div class="ldot" style="--lc:#38a169"></div><div class="lbar" style="background:#38a169"></div></div>
+      <div class="lc">
+        <div class="lstation">鎌倉站（かまくら）西口 → 長谷站（はせ）</div>
+        <div class="ldetail">
+          江之島電車（えのでん）全線
+          <span class="lbadge" style="background:#38a169">藤沢（ふじさわ）方向</span>
+          <span class="lplat">鎌倉站 1號月台</span><br>
+          <span class="ltime">約 7 分鐘</span><span class="ldur">・¥210 ／ 每小時 6–8 班</span>
+        </div>
+        <div class="tip-box">⚠️ 7人注意：假日超擠！7人可能無法同班車。建議分成兩組各 3–4 人，第一班上不去就等下一班，在長谷站集合即可。</div>
+      </div>
+    </div>
+
+    <div class="leg" style="--lc:#38a169">
+      <div class="leg-line"><div class="ldot" style="--lc:#38a169"></div><div class="lbar" style="background:#38a169"></div></div>
+      <div class="lc">
+        <div class="lstation">長谷站（はせ）→ 江之島站（えのしまえき）</div>
+        <div class="ldetail">
+          江之島電車（えのでん）
+          <span class="lbadge" style="background:#38a169">藤沢（ふじさわ）方向</span>
+          <span class="ltime">約 12 分鐘</span><span class="ldur">・¥210</span><br>
+          江之島站（えのしまえき）→ 弁天橋（べんてんばし）入口 徒步約 12 分鐘
+        </div>
+      </div>
+    </div>
+
+    <div class="leg" style="--lc:#553c9a">
+      <div class="leg-line"><div class="ldot" style="--lc:#553c9a"></div></div>
+      <div class="lc">
+        <div class="lstation">片瀬江之島站（かたせえのしま・小田急）→ 藤沢（ふじさわ）→ 橫濱（よこはま）</div>
+        <div class="ldetail">
+          小田急（おだきゅう）片瀬江之島→藤沢 約 2 分 → JR 東海道線（とうかいどうせん）橫濱方向 約 27 分<br>
+          <span class="lbadge" style="background:#553c9a">藤沢站 東海道線 上行月台</span>
+          <span class="ltime">合計約 35 分鐘</span><span class="ldur">・¥580</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════ 行程時間表 ════════════ -->
+<h2 style="--c:#c53030">🗓 全日行程時間表</h2>
+
+<div class="stop" style="--c:#0f2044">
+  <div class="t">7:20</div>
+  <div><h3>東新宿（ひがししんじゅく）出發</h3>
+  <p>副都心線（ふくとしんせん）急行搭乘，確認 IC 卡餘額。建議人人各帶一些現金備用（部分景點不收 IC 卡）。</p>
+  <span class="tag" style="background:#0f2044">出發</span></div>
+</div>
+
+<div class="stop" style="--c:#c53030" onclick="flyTo(1)">
+  <div class="t">8:55</div>
+  <div><h3>鶴岡八幡宮（つるがおかはちまんぐう）参拜 <span class="rec">必去</span></h3>
+  <p>鎌倉東口出站，沿若宮大路（わかみやおうじ）直走約 10 分鐘。早晨人少光線美，朱紅鳥居、舞殿、源平池逐一慢遊。</p>
+  <span class="tag" style="background:#c53030">主要景點</span></div>
+</div>
+
+<div class="stop" style="--c:#ed8936" onclick="flyTo(2)">
+  <div class="t">9:50</div>
+  <div><h3>小町通り（こまちどおり）掃街購物 🛍</h3>
+  <p>從八幡宮往南走即是。鳩形餅乾、現做巧克力塔、抹茶霜淇淋一條街掃齊。7人可分頭行動，10:20 在鎌倉西口集合坐江之島電車。</p>
+  <span class="tag" style="background:#ed8936">購物 美食</span></div>
+</div>
+
+<div class="stop" style="--c:#38a169" onclick="flyTo(3)">
+  <div class="t">10:30</div>
+  <div><h3>長谷寺（はせでら）<span class="rec">推薦</span></h3>
+  <p>鎌倉站西口 → 江之島電車 1號月台 → 長谷站（7 分）→ 步行 5 分。觀音菩薩像（9.18m）、山頂海景展望台、弁天洞窟一網打盡。</p>
+  <span class="tag" style="background:#38a169">寺院</span></div>
+</div>
+
+<div class="stop" style="--c:#c53030" onclick="flyTo(4)">
+  <div class="t">11:30</div>
+  <div><h3>高徳院・鎌倉大佛（こうとくいん・かまくらだいぶつ）<span class="rec">必去</span></h3>
+  <p>從長谷寺步行約 10 分鐘。13.35m 青銅大佛露天端坐，¥300 入場。可加付 ¥50 進入佛像內部（空洞參觀），7 人一起進去頗為壯觀。</p>
+  <span class="tag" style="background:#c53030">主要景點</span></div>
+</div>
+
+<div class="stop" style="--c:#2b6cb0">
+  <div class="t">12:30</div>
+  <div><h3>移動至江之島（えのしま）+ 午餐 🐟</h3>
+  <p>長谷站 → 江之島電車 → 江之島站（12分）→ 步行 12 分至弁天橋（べんてんばし）。午餐選とびっちょ（白魚丼）或江ノ島小屋（海景露台）。強烈建議提前預約！</p>
+  <span class="tag" style="background:#2b6cb0">移動 午餐</span></div>
+</div>
+
+<div class="stop" style="--c:#c53030" onclick="flyTo(6)">
+  <div class="t">13:30</div>
+  <div><h3>江島神社（えのしまじんじゃ）三社参拜</h3>
+  <p>過弁天橋後沿中見世通り（なかみせどおり）參道上行：辺津宮→中津宮→奥津宮。財運・音樂・縁結びご利益，龍神御守超受歡迎。全程約 40 分鐘。</p>
+  <span class="tag" style="background:#c53030">主要景點</span></div>
+</div>
+
+<div class="stop" style="--c:#ed8936" onclick="flyTo(7)">
+  <div class="t">14:30</div>
+  <div><h3>江之島海上蠟燭塔（シーキャンドル）+ 島內散策 <span class="rec">推薦</span></h3>
+  <p>60m 展望塔（¥500），眺富士山、相模灣全景。章魚仙貝（タコせんべい）邊逛邊吃。島西側「稚児ヶ淵（ちごがふち）」的岩礁海景也值得一走。</p>
+  <span class="tag" style="background:#ed8936">展望 散策</span></div>
+</div>
+
+<div class="stop" style="--c:#553c9a">
+  <div class="t">15:50</div>
+  <div><h3>江之島 → 橫濱（よこはま）移動</h3>
+  <p>小田急（おだきゅう）片瀬江之島站 → 藤沢（2分）→ JR 東海道線 橫濱方向（27分）→ 步行或搭港未來線（みなとみらいせん）至地標塔。</p>
+  <span class="tag" style="background:#553c9a">移動</span></div>
+</div>
+
+<div class="stop" style="--c:#0f2044" onclick="flyTo(9)">
+  <div class="t">17:00</div>
+  <div><h3>橫濱地標塔（ランドマークタワー）69 樓展望台 <span class="rec">必去</span></h3>
+  <p>超音速電梯 40 秒升至 69 樓（¥1,000/人）。「黃金一小時」17:30–18:30 夕陽＋夜景同框，富士山剪影清晰可見。7人可同時入場，附設咖啡廳可邊喝邊賞。</p>
+  <span class="tag" style="background:#0f2044">夜景</span></div>
+</div>
+
+<div class="stop" style="--c:#553c9a" onclick="flyTo(10)">
+  <div class="t">19:00</div>
+  <div><h3>橫濱港未來（みなとみらい）晚餐 🍷</h3>
+  <p>7人首推 MANGIA MANGIA（地標塔5樓・義式料理・夜景窗邊）或海鮮立食 PACIOREK HANATARE（牡蠣 ¥99）。詳見餐廳推薦區。</p>
+  <span class="tag" style="background:#553c9a">晚餐</span></div>
+</div>
+
+<div class="stop" style="--c:#0f2044">
+  <div class="t">21:00</div>
+  <div><h3>返程：橫濱 → 東新宿（ひがししんじゅく）</h3>
+  <p>港未來站（みなとみらいえき）搭港未來線直通東橫線 → 涉谷（約 30 分）→ 副都心線 池袋（いけぶくろ）方向 → 東新宿（約 5 分）。回程總計約 40 分鐘。</p>
+  <span class="tag" style="background:#0f2044">返程</span></div>
+</div>
+
+<hr class="dv">
+
+<!-- ════════════ 回程交通 ════════════ -->
+<h2 style="--c:#553c9a">🏠 回程交通：橫濱 → 東新宿</h2>
+<p style="font-size:11px;color:#718096;margin-bottom:8px">全程約 40 分鐘 ／ 費用約 ¥530/人</p>
+
+<div class="tb">
+  <div class="tb-hd" style="background:linear-gradient(90deg,#553c9a,#805ad5)">回程 · 最輕鬆路線　港未來線直通副都心線，不需出站</div>
+  <div class="tb-body">
+
+    <div class="leg" style="--lc:#553c9a">
+      <div class="leg-line"><div class="ldot" style="--lc:#553c9a"></div><div class="lbar" style="background:#553c9a"></div></div>
+      <div class="lc">
+        <div class="lstation">港未來站（みなとみらいえき）出發</div>
+        <div class="ldetail">
+          橫濱高速鐵道 港未來線（みなとみらいせん）直通東急東橫線<br>
+          <span class="lbadge" style="background:#553c9a">急行・涉谷（しぶや）・池袋（いけぶくろ）方向</span>
+          <span class="lplat">港未來站 2號月台</span><br>
+          <span class="ltime">約 30 分鐘</span><span class="ldur">・ 從地標塔步行 3 分鐘即到</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="leg" style="--lc:#9f7aea">
+      <div class="leg-line"><div class="ldot" style="--lc:#9f7aea"></div><div class="lbar" style="background:#9f7aea"></div></div>
+      <div class="lc">
+        <div class="lstation">涉谷站（しぶや）轉乘</div>
+        <div class="ldetail">
+          東橫線月台（地下5層）→ 直接換乘副都心線，無需出閘<br>
+          東京地鐵 副都心線（ふくとしんせん）
+          <span class="lbadge" style="background:#9f7aea">急行・和光市（わこうし）・池袋方向</span>
+          <span class="lplat">5・6號月台（地下5層）</span><br>
+          <span class="ltime">約 5 分鐘</span>
+        </div>
+        <div class="tip-box">✅ 回程涉谷轉乘超簡單：東橫線抵達後，往「副都心線 池袋・和光市方向」月台走幾步即可。與去程相同站層（B5F），完全不需出閘。</div>
+      </div>
+    </div>
+
+    <div class="leg" style="--lc:#9f7aea">
+      <div class="leg-line"><div class="ldot" style="--lc:#9f7aea"></div></div>
+      <div class="lc">
+        <div class="lstation">東新宿站（ひがししんじゅく）到達 <span style="color:#718096;font-size:11px">約 21:40</span></div>
+        <div class="ldetail">副都心線 F-12 站。一天行程圓滿完成！🎉</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="dv">
+
+<!-- ════════════ 景點詳情 ════════════ -->
+<span class="sec-label" style="background:#c53030">🏯 主要景點詳介</span>
+
+<div class="spot-card" onclick="flyTo(1)">
+  <div class="sp-wrap">
+    <img class="sp-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Tsurugaoka_Hachimangu2.jpg/800px-Tsurugaoka_Hachimangu2.jpg" alt="鶴岡八幡宮" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="sp-grad" style="background:linear-gradient(135deg,#fff5f5,#fed7d7)">⛩️</div>
+    <div class="sp-badge">🔴 神社</div>
+  </div>
+  <div class="bd">
+    <h3>鶴岡八幡宮</h3>
+    <div class="name-jp">つるがおかはちまんぐう ／ Tsurugaoka Hachimangu</div>
+    <div class="desc">鎌倉的精神象徵，1180 年由源賴朝（みなもとのよりとも）遷建至此。從一之鳥居延伸 1.8km 的若宮大路（わかみやおうじ）是全程最美的參道。本殿、舞殿、源平池、白旗神社皆值得細細探訪。春天染井吉野滿開，秋天銀杏並排金黃，四季各有絕景。7人一起站在石階上俯瞰鎌倉全景，是絕對值得記錄的集體照畫面。</div>
+    <div class="meta">
+      <span>⭐ 4.4（28,372 則評論）</span>
+      <span>🕐 6:00–20:00 免費入場</span>
+      <span>📍 鎌倉站東口 步行 10 分鐘</span>
+    </div>
+  </div>
+</div>
+
+<div class="spot-card" onclick="flyTo(2)">
+  <div class="sp-wrap">
+    <img class="sp-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Komachi_dori_Kamakura.jpg/800px-Komachi_dori_Kamakura.jpg" alt="小町通り" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="sp-grad" style="background:linear-gradient(135deg,#fffaf0,#fbd38d)">🛍️</div>
+    <div class="sp-badge">🟠 商店街</div>
+  </div>
+  <div class="bd">
+    <h3>小町通り</h3>
+    <div class="name-jp">こまちどおり ／ Komachi Street</div>
+    <div class="desc">鎌倉最熱鬧的商店街，從鎌倉站東口一路延伸至鶴岡八幡宮。早晨 9 點前人最少、最舒服。各種限定美食和伴手禮林立：豊島屋鳩形餅乾、MAISON CACAO 熔岩巧克力塔（整點限量出爐）、現炸可樂餅、抹茶千層蛋糕⋯⋯7人可自由分頭行動，設定集合時間即可。</div>
+    <div class="meta">
+      <span>🕐 各店約 9:00–18:00</span>
+      <span>📍 鎌倉站東口 步行 1 分鐘</span>
+    </div>
+  </div>
+</div>
+
+<div class="spot-card" onclick="flyTo(3)">
+  <div class="sp-wrap">
+    <img class="sp-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Hasedera_temple_Kamakura.jpg/800px-Hasedera_temple_Kamakura.jpg" alt="長谷寺" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="sp-grad" style="background:linear-gradient(135deg,#f0fff4,#c6f6d5)">🌿</div>
+    <div class="sp-badge">🟢 寺院</div>
+  </div>
+  <div class="bd">
+    <h3>長谷寺</h3>
+    <div class="name-jp">はせでら ／ Hasedera Temple</div>
+    <div class="desc">天平年間古刹，本尊十一面觀音菩薩高達 9.18m，是日本最大規格之一。山腰觀景台可俯瞰鎌倉市區與由比ヶ浜（ゆいがはま）海岸全景，海風拂面極度療癒。弁天洞窟（べんてんどうくつ）內有石雕弁財天，空間神秘獨特。紫陽花盛開季節（6月）需提前預約進場時段。</div>
+    <div class="meta">
+      <span>⭐ 4.5（16,155 則）</span>
+      <span>🕐 8:00–16:30（10–2月至 17:00）</span>
+      <span>💴 ¥400/人</span>
+    </div>
+  </div>
+</div>
+
+<div class="spot-card" onclick="flyTo(4)">
+  <div class="sp-wrap">
+    <img class="sp-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Kotoku-in_Kamakura.jpg/800px-Kotoku-in_Kamakura.jpg" alt="鎌倉大佛" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="sp-grad" style="background:linear-gradient(135deg,#ebf8ff,#bee3f8)">🙏</div>
+    <div class="sp-badge">🔴 必訪</div>
+  </div>
+  <div class="bd">
+    <h3>高徳院・鎌倉大佛</h3>
+    <div class="name-jp">こうとくいん・かまくらだいぶつ ／ Kotoku-in Daibutsu</div>
+    <div class="desc">高 13.35m、重 121 噸的青銅阿彌陀如來坐像，在 15 世紀颱風摧毀覆蓋堂宇後，此後便以露天之姿靜坐至今，超過 700 年。可付 ¥50 進入佛像空洞內部參觀，體驗從內部仰望的震撼感。7人輪流進去拍照是記念儀式。從大佛正面退遠一點，廣角拍攝效果最壯觀。</div>
+    <div class="meta">
+      <span>⭐ 4.4（30,467 則）</span>
+      <span>🕐 8:00–16:45</span>
+      <span>💴 ¥300（佛像內部 +¥50）</span>
+    </div>
+  </div>
+</div>
+
+<div class="spot-card" onclick="flyTo(6)">
+  <div class="sp-wrap">
+    <img class="sp-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Enoshima-shrine02s3200.jpg/800px-Enoshima-shrine02s3200.jpg" alt="江島神社" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="sp-grad" style="background:linear-gradient(135deg,#fff5f5,#fed7d7)">⛩️</div>
+    <div class="sp-badge">🔴 神社</div>
+  </div>
+  <div class="bd">
+    <h3>江島神社</h3>
+    <div class="name-jp">えのしまじんじゃ ／ Enoshima Shrine</div>
+    <div class="desc">以弁財天（べんざいてん）為主神，財運・音樂・縁結びご利益兼備。三社參拜路線：辺津宮（へつのみや）→ 中津宮（なかつのみや）→ 奥津宮（おくつのみや），全程上坡路約 40 分鐘。途中可見龍神傳說石雕，龍形御守是最熱門品。奥津宮旁「岩屋洞窟（いわやどうくつ）」可付費入內（¥500）探訪海蝕洞，7人合拍洞窟照超有趣。</div>
+    <div class="meta">
+      <span>⭐ 4.3（7,274 則）</span>
+      <span>🕐 全天開放</span>
+      <span>💴 免費（奉安殿 ¥200・岩屋洞窟 ¥500）</span>
+    </div>
+  </div>
+</div>
+
+<div class="spot-card" onclick="flyTo(7)">
+  <div class="sp-wrap">
+    <img class="sp-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Enoshima_sea_candle.jpg/800px-Enoshima_sea_candle.jpg" alt="江之島海上蠟燭塔" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="sp-grad" style="background:linear-gradient(135deg,#fffaf0,#feebc8)">🕯️</div>
+    <div class="sp-badge">🟡 展望台</div>
+  </div>
+  <div class="bd">
+    <h3>江之島海上蠟燭塔（シーキャンドル）</h3>
+    <div class="name-jp">えのしまシーキャンドル ／ Enoshima Sea Candle</div>
+    <div class="desc">60m 高燈塔形展望塔，360° 眺望相模灣（さがみわん）、三浦半島、伊豆半島，晴天時富士山清晰浮現於遠方。下午陽光角度最美，黃昏海面染成橙金。 Samuel Cocking 庭園（サムエル・コッキング苑）隨季節盛開鬱金香與玫瑰，也在票價內。電扶梯（¥200）可省腿力——逛了半天江之島已經夠累了！</div>
+    <div class="meta">
+      <span>⭐ 4.4（8,431 則）</span>
+      <span>🕐 9:00–20:00</span>
+      <span>💴 ¥500（電扶梯 +¥200）</span>
+    </div>
+  </div>
+</div>
+
+<div class="spot-card" onclick="flyTo(9)">
+  <div class="sp-wrap">
+    <img class="sp-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/YokohamaLandmarkTower2009.JPG/800px-YokohamaLandmarkTower2009.JPG" alt="橫濱地標塔" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="sp-grad" style="background:linear-gradient(135deg,#ebf8ff,#e9d8fd)">🌃</div>
+    <div class="sp-badge">🔵 夜景</div>
+  </div>
+  <div class="bd">
+    <h3>橫濱地標塔 69 樓天空花園（スカイガーデン）</h3>
+    <div class="name-jp">よこはまランドマークタワー スカイガーデン ／ Sky Garden</div>
+    <div class="desc">超音速電梯 40 秒直衝 69 樓，日本第二高展望台。一側是東京都市叢林，另一側是橫濱港灣＋富士山剪影。強烈推薦 17:30–18:30「夕陽+夜景」黃金時段入場：此時落日、城市燈光、港灣水面反光同框，是一天最完美的收尾場景。附設咖啡廳可邊喝熱飲邊欣賞。7人同時入場完全沒問題，唯三腳架・自拍棒禁止攜入。</div>
+    <div class="meta">
+      <span>⭐ 4.5（3,093 則）</span>
+      <span>🕐 平日 10:00–21:00 / 週六至 22:00</span>
+      <span>💴 ¥1,000/人（7人共 ¥7,000）</span>
+    </div>
+  </div>
+</div>
+
+<hr class="dv">
+
+<!-- ════════════ 推薦小店 ════════════ -->
+<span class="sec-label" style="background:#ed8936">🛍 推薦小店・伴手禮</span>
+
+<h2 style="--c:#ed8936">鎌倉 小町通り（こまちどおり）</h2>
+<div class="shop-grid">
+
+  <div class="shop-card" onclick="flyToShop(0)">
+    <div class="sh-wrap">
+      <img class="sh-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Kamakura_Budda_Daibutsu_front_1885.jpg/400px-Kamakura_Budda_Daibutsu_front_1885.jpg" alt="MAISON CACAO" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="sh-grad" style="background:linear-gradient(135deg,#2d3748,#744210)">🍫</div>
+      <div class="sh-cat" style="background:#744210">甜點</div>
+    </div>
+    <div class="sb">
+      <h4>MAISON CACAO</h4>
+      <div class="sname-jp">メゾンカカオ ／ 鎌倉小町本店</div>
+      <div class="sdesc">每整點限量出爐的熔岩巧克力塔，熱賣到常售完。每人限購 2 個，排隊等待本身就是體驗。⭐ 4.3</div>
+      <div class="sprice">巧克力塔 ¥600 ／ 生巧克力泡芙 ¥650</div>
+    </div>
+  </div>
+
+  <div class="shop-card" onclick="flyToShop(1)">
+    <div class="sh-wrap">
+      <img class="sh-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Hato_sable_Kamakura.jpg/400px-Hato_sable_Kamakura.jpg" alt="豊島屋" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="sh-grad" style="background:linear-gradient(135deg,#fffbeb,#feebc8)">🕊️</div>
+      <div class="sh-cat" style="background:#c53030">伴手禮</div>
+    </div>
+    <div class="sb">
+      <h4>豊島屋本店（とします）</h4>
+      <div class="sname-jp">とします ／ 鳩サブレー 名店</div>
+      <div class="sdesc">鎌倉最具代表性伴手禮！鴿子形狀奶油餅乾「鳩形餅乾（はとサブレー）」帶回台灣必大受好評。⭐ 4.2</div>
+      <div class="sprice">鳩形餅乾 5 片裝 ¥756〜</div>
+    </div>
+  </div>
+
+  <div class="shop-card" onclick="flyToShop(2)">
+    <div class="sh-wrap">
+      <img class="sh-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Enoshima_sea_candle.jpg/400px-Enoshima_sea_candle.jpg" alt="鎌倉スイーツ" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="sh-grad" style="background:linear-gradient(135deg,#f0fff4,#c6f6d5)">🍵</div>
+      <div class="sh-cat" style="background:#38a169">甜點</div>
+    </div>
+    <div class="sb">
+      <h4>鎌倉甜點小屋</h4>
+      <div class="sname-jp">鎌倉スイーツ こまちどおり</div>
+      <div class="sdesc">抹茶蕨餅飲料（わらびもちドリンク）＋霜淇淋套餐，清爽不膩，是小町通り人氣排隊小店。⭐ 4.7</div>
+      <div class="sprice">蕨餅飲料套餐 ¥800〜</div>
+    </div>
+  </div>
+
+  <div class="shop-card" onclick="flyToShop(3)">
+    <div class="sh-wrap">
+      <img class="sh-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Tsurugaoka_Hachimangu2.jpg/400px-Tsurugaoka_Hachimangu2.jpg" alt="大佛燒" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="sh-grad" style="background:linear-gradient(135deg,#fffaf0,#fbd38d)">🪬</div>
+      <div class="sh-cat" style="background:#c05621">打卡</div>
+    </div>
+    <div class="sb">
+      <h4>大佛形狀卡士達餅（大佛焼き）</h4>
+      <div class="sname-jp">だいぶつやき ／ 友屋（ともや）</div>
+      <div class="sdesc">大佛造型的溫熱卡士達甜點，從高徳院走出來沿路就有得買。趣味打卡必拍。⭐ 4.1</div>
+      <div class="sprice">大佛焼き ¥220 / 個</div>
+    </div>
+  </div>
+
+</div>
+
+<h2 style="--c:#ed8936">江之島 中見世通り（なかみせどおり）</h2>
+<div class="shop-grid">
+
+  <div class="shop-card" onclick="flyToShop(4)">
+    <div class="sh-wrap">
+      <img class="sh-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Enoshima-shrine02s3200.jpg/400px-Enoshima-shrine02s3200.jpg" alt="タコせんべい" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="sh-grad" style="background:linear-gradient(135deg,#ebf8ff,#bee3f8)">🦑</div>
+      <div class="sh-cat" style="background:#2b6cb0">江之島名物</div>
+    </div>
+    <div class="sb">
+      <h4>整隻章魚壓片仙貝（タコせんべい）</h4>
+      <div class="sname-jp">たこせんべい ／ 朝日本店（あさひほんてん）</div>
+      <div class="sdesc">現場把整隻章魚壓成薄片！邊看製作過程邊拍超有趣，江之島最具代表性名物。⭐ 3.8</div>
+      <div class="sprice">章魚仙貝 ¥1,100 ／ 碎片版（割れ）¥427</div>
+    </div>
+  </div>
+
+  <div class="shop-card" onclick="flyToShop(5)">
+    <div class="sh-wrap">
+      <img class="sh-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Shirasu-don.jpg/400px-Shirasu-don.jpg" alt="白魚霜淇淋" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="sh-grad" style="background:linear-gradient(135deg,#f0fff4,#c6f6d5)">🐟</div>
+      <div class="sh-cat" style="background:#38a169">江之島名物</div>
+    </div>
+    <div class="sb">
+      <h4>白魚霜淇淋（しらすソフト）</h4>
+      <div class="sname-jp">しらすソフトクリーム ／ 參道各家</div>
+      <div class="sdesc">白魚（しらす）＋香草霜淇淋的特殊組合，比想像中更好吃！參道上多家販售，邊走邊吃最對味。</div>
+      <div class="sprice">白魚霜淇淋 ¥450〜</div>
+    </div>
+  </div>
+
+</div>
+
+<hr class="dv">
+
+<!-- ════════════ 餐廳推薦 ════════════ -->
+<span class="sec-label" style="background:#c53030">🍽 餐廳推薦</span>
+
+<h2 style="--c:#c53030">午餐：江之島 海鮮</h2>
+
+<div class="food-card" onclick="flyToFood(0)">
+  <div class="fc-inner">
+    <div class="fc-wrap">
+      <img class="fc-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Shirasu-don.jpg/400px-Shirasu-don.jpg" alt="白魚丼" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="fc-grad" style="background:linear-gradient(135deg,#ebf8ff,#bee3f8)">🐟</div>
+    </div>
+    <div class="fc-body">
+      <h4><span class="cl cl-l">午餐</span> とびっちょ <span class="stars">⭐4.0（3,132）</span></h4>
+      <div class="name-jp">江之島最知名白魚料理店</div>
+      <div class="menu">白魚丼（しらすどん）¥1,350 ／ 釜揚白魚丼 ¥1,480 ／ 江之島套餐 ¥4,180</div>
+      <div class="desc">生食・燙引・天婦羅三種方式同時品嚐，份量扎實、CP 值高。店就在弁天橋入口附近，非常好找。</div>
+      <div class="gnote">👥 7人必須提前電話預約，週末 12:00–13:30 幾乎無位可走入</div>
+      <div class="rv">白魚新鮮到咬一口就嚐到甜味，生食版本最強推，份量多到兩人一份就夠了。</div>
+    </div>
+  </div>
+</div>
+
+<div class="food-card" onclick="flyToFood(1)">
+  <div class="fc-inner">
+    <div class="fc-wrap">
+      <img class="fc-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Enoshima-shrine02s3200.jpg/400px-Enoshima-shrine02s3200.jpg" alt="江ノ島小屋" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="fc-grad" style="background:linear-gradient(135deg,#f0fff4,#c6f6d5)">🌊</div>
+    </div>
+    <div class="fc-body">
+      <h4><span class="cl cl-l">午餐</span> 江之島小屋（えのしまこや）<span class="stars">⭐4.3（2,432）</span></h4>
+      <div class="name-jp">水族館旁・海景露台名店</div>
+      <div class="menu">主廚丼（まかないどん）¥2,080 ／ 白魚丼 ¥1,840 ／ 今日之魚 時價</div>
+      <div class="desc">坐在露台對著整片相模灣（さがみわん）吃海鮮丼。食材嚴選新鮮，稍貴但絕對值得。</div>
+      <div class="gnote">👥 7人建議提早預約，或 12:00 前到，否則需等候 30–40 分鐘</div>
+      <div class="rv">坐在露台，背後是整片相模灣，這才是來江之島的正確打開方式。</div>
+    </div>
+  </div>
+</div>
+
+<h2 style="--c:#553c9a">晚餐：橫濱港未來（みなとみらい）夜景</h2>
+
+<div class="food-card" onclick="flyToFood(2)">
+  <div class="fc-inner">
+    <div class="fc-wrap">
+      <img class="fc-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/YokohamaLandmarkTower2009.JPG/400px-YokohamaLandmarkTower2009.JPG" alt="MANGIA MANGIA" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="fc-grad" style="background:linear-gradient(135deg,#fef3c7,#e9d8fd)">🍝</div>
+    </div>
+    <div class="fc-body">
+      <h4><span class="cl cl-d">晚餐</span> MANGIA MANGIA <span class="stars">⭐4.1（700）</span></h4>
+      <div class="name-jp">地標塔 5 樓義式餐廳・港灣夜景窗邊座</div>
+      <div class="menu">炸魷魚圈 ¥1,200 ／ 自製千層麵（ラザニア）¥2,300 ／ 里肌牛排 400g ¥4,500</div>
+      <div class="desc">窗外就是橫濱港灣夜景，爵士樂背景音樂，空間寬裕適合 7 人大桌聚餐。一天旅程最完美的收尾。</div>
+      <div class="gnote">👥 7人首推！空間大、可坐大桌。<strong>需提前預約 ☎ 050-5485-1337</strong></div>
+      <div class="rv">靠窗座位加港灣夜景加現做義大利麵，整個夜晚都對了，Frank Sinatra 的爵士樂在背後響著。</div>
+    </div>
+  </div>
+</div>
+
+<div class="food-card" onclick="flyToFood(3)">
+  <div class="fc-inner">
+    <div class="fc-wrap">
+      <img class="fc-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Minato_Mirai_21.jpg/400px-Minato_Mirai_21.jpg" alt="PACIOREK" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="fc-grad" style="background:linear-gradient(135deg,#ebf8ff,#bee3f8)">🦪</div>
+    </div>
+    <div class="fc-body">
+      <h4><span class="cl cl-d">晚餐</span> SEAFOOD STAND PACIOREK <span class="stars">⭐4.6（356）</span></h4>
+      <div class="name-jp">港未來一番街・高評價海鮮酒吧</div>
+      <div class="menu">生牡蠣（なまがき）¥99/顆 ／ 精選海鮮拼盤 ／ 自然派葡萄酒</div>
+      <div class="desc">QR code 點餐超方便，牡蠣極鮮，輕鬆海鮮酒吧氛圍，適合喜歡自由隨性風格的組合。</div>
+      <div class="gnote">👥 7人注意：吧台+座席可容納，建議 18:00 前到基本不用等</div>
+      <div class="rv">牡蠣 ¥99 根本沒有理由不點第二輪，冰鎮得很好，鮮甜到讓人不想走。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ 完整備忘 ════════════ -->
+<h2 style="--c:#2b6cb0">📋 完整備忘 & 實用 Tips</h2>
+<div class="notes">
+  <strong>🚃 交通重點整理</strong>
+  <ul>
+    <li><strong>去程：</strong>東新宿（副都心線）→ 涉谷（同月台換東橫線，B5F）→ 橫濱 → 鎌倉</li>
+    <li>涉谷轉乘：副都心線與東橫線<strong>同一月台</strong>（地下5層），無需出閘，看「橫濱方向」走過去即可</li>
+    <li>橫濱轉乘：出東橫線閘後步行 5 分鐘到 JR 3號線，感應 IC 卡重新入閘</li>
+    <li><strong>回程：</strong>港未來站（港未來線直通東橫線）→ 涉谷 → 副都心線 → 東新宿</li>
+    <li>回程涉谷：東橫線下車後，直接轉副都心線 5・6號月台，方向「池袋・和光市」→ 東新宿</li>
+    <li>江之島電車一日券「のりおりくん」¥800，超過 4 次搭乘就划算</li>
+  </ul>
+  <br>
+  <strong>💴 費用概算（7人 × 1人份）</strong>
+  <ul>
+    <li>交通：東新宿↔鎌倉 ¥880 ＋ 江之島電車 ¥630 ＋ 江之島→橫濱 ¥580 ＋ 回程 ¥530 ≒ <strong>¥2,620</strong></li>
+    <li>景點：長谷寺 ¥400 ＋ 大佛 ¥300 ＋ 海上蠟燭塔 ¥700 ＋ 展望台 ¥1,000 ≒ <strong>¥2,400</strong></li>
+    <li>飲食（午餐+晚餐+零食）：約 <strong>¥4,000–6,000</strong></li>
+    <li>合計預估：約 <strong>¥9,000–11,000/人</strong>（不含購物）</li>
+  </ul>
+  <br>
+  <strong>👥 7人同行攻略</strong>
+  <ul>
+    <li>小町通り散策設定自由行動，約定時間與地點集合</li>
+    <li>景點購票：2名先去排隊，其他人在附近拍照等候</li>
+    <li>江之島電車擁擠時：分成兩組 3–4 人，下一班在長谷站月台集合</li>
+    <li>晚餐 MANGIA MANGIA 請提前 3–7 天預約，☎ 050-5485-1337</li>
+    <li>全程使用 Suica / PASMO IC 卡，建議各自儲值 ¥3,000 以上</li>
+  </ul>
+  <br>
+  <strong>📸 拍照提醒</strong>
+  <ul>
+    <li>鶴岡八幡宮 石階全景照：站在石階頂端往下拍，7人站滿石階很壯觀</li>
+    <li>鎌倉大佛 最佳位置：往入口方向退遠至柵欄邊，仰角拍攝最顯高大</li>
+    <li>地標塔展望台：三腳架・自拍棒禁止，手持拍攝即可</li>
+    <li>江之島海上蠟燭塔：黃昏時段光線最美，建議 15:30 左右登頂</li>
+  </ul>
+</div>
+
+</div>
+
+<script>
+const spots=[
+  {name:"東新宿",lat:35.7042,lng:139.7118,color:"#718096",desc:"出發點"},
+  {name:"鶴岡八幡宮",lat:35.3260,lng:139.5563,color:"#c53030",desc:"⭐4.4 鎌倉必訪神社",gm:"https://maps.google.com/?q=鶴岡八幡宮"},
+  {name:"小町通り",lat:35.3223,lng:139.5527,color:"#ed8936",desc:"鎌倉商店街 伴手禮",gm:"https://maps.google.com/?q=小町通り+鎌倉"},
+  {name:"長谷寺",lat:35.3125,lng:139.5331,color:"#38a169",desc:"⭐4.5 觀音像・海景展望",gm:"https://maps.google.com/?q=長谷寺+鎌倉"},
+  {name:"高徳院・鎌倉大佛",lat:35.3168,lng:139.5357,color:"#c53030",desc:"⭐4.4 13.35m 青銅大佛",gm:"https://maps.google.com/?q=高徳院+鎌倉大仏"},
+  {name:"移動中",lat:35.308,lng:139.495,color:"#2b6cb0",desc:"前往江之島"},
+  {name:"江島神社",lat:35.3004,lng:139.4796,color:"#c53030",desc:"⭐4.3 弁財天・縁結び",gm:"https://maps.google.com/?q=江島神社"},
+  {name:"海上蠟燭塔",lat:35.2997,lng:139.4784,color:"#ed8936",desc:"⭐4.4 60m 展望台",gm:"https://maps.google.com/?q=江の島シーキャンドル"},
+  {name:"移動中",lat:35.380,lng:139.560,color:"#553c9a",desc:"前往橫濱"},
+  {name:"地標塔展望台 69F",lat:35.4546,lng:139.6315,color:"#0f2044",desc:"⭐4.5 橫濱夜景展望台",gm:"https://maps.google.com/?q=横浜ランドマークタワースカイガーデン"},
+  {name:"MANGIA MANGIA 晚餐",lat:35.4547,lng:139.6317,color:"#553c9a",desc:"地標塔 5F 義式餐廳",gm:"https://maps.google.com/?q=MANGIA+MANGIA+横浜ランドマーク"},
+];
+const foods=[
+  {name:"とびっちょ",lat:35.3013,lng:139.4822,item:"白魚丼 ¥1,350"},
+  {name:"江ノ島小屋",lat:35.3077,lng:139.4825,item:"主廚丼 ¥2,080"},
+  {name:"MANGIA MANGIA",lat:35.4547,lng:139.6317,item:"自製千層麵 ¥2,300"},
+  {name:"SEAFOOD STAND PACIOREK",lat:35.4615,lng:139.6281,item:"生牡蠣 ¥99"},
+];
+const shops=[
+  {name:"MAISON CACAO",lat:35.3210,lng:139.5521,item:"巧克力塔 ¥600"},
+  {name:"豊島屋本店",lat:35.3204,lng:139.5526,item:"鳩形餅乾"},
+  {name:"鎌倉甜點小屋",lat:35.3229,lng:139.5531,item:"蕨餅飲料"},
+  {name:"大佛焼き",lat:35.3228,lng:139.5530,item:"大佛形狀餅 ¥220"},
+  {name:"朝日本店 章魚仙貝",lat:35.3009,lng:139.4805,item:"タコせんべい ¥1,100"},
+  {name:"白魚霜淇淋",lat:35.3011,lng:139.4806,item:"しらすソフト ¥450"},
+];
+
+const map=L.map('map');
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap',maxZoom:18}).addTo(map);
+
+// Route polyline
+const rc=[[35.7042,139.7118],[35.5194,139.6181],[35.3260,139.5563],[35.3125,139.5331],[35.3168,139.5357],[35.3004,139.4796],[35.4546,139.6315]];
+L.polyline(rc,{color:'#2b6cb0',weight:3,opacity:.4,dashArray:'8,6'}).addTo(map);
+L.polyline([[35.4615,139.6281],[35.4546,139.6315],[35.7042,139.7118]],{color:'#553c9a',weight:2,opacity:.3,dashArray:'5,8'}).addTo(map);
+
+// Area boxes
+L.rectangle([[35.305,139.525],[35.340,139.570]],{color:'#c53030',weight:1.5,fillOpacity:.04,dashArray:'5,5'}).addTo(map);
+L.rectangle([[35.295,139.472],[35.312,139.490]],{color:'#ed8936',weight:1.5,fillOpacity:.04,dashArray:'5,5'}).addTo(map);
+L.rectangle([[35.445,139.620],[35.470,139.645]],{color:'#553c9a',weight:1.5,fillOpacity:.04,dashArray:'5,5'}).addTo(map);
+
+const markers=[];
+spots.forEach((s,i)=>{
+  if(s.name==='移動中'||s.name==='東新宿')return;
+  const ic=L.divIcon({html:`<div style="width:27px;height:27px;border-radius:50%;background:${s.color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;box-shadow:0 2px 7px rgba(0,0,0,.4);border:2px solid #fff">${i}</div>`,className:'',iconSize:[27,27],iconAnchor:[13,13]});
+  const mk=L.marker([s.lat,s.lng],{icon:ic}).addTo(map);
+  mk.bindPopup(`<div class="popup-title">${s.name}</div><div class="popup-sub">${s.desc}</div>${s.gm?`<div class="popup-link"><a href="${s.gm}" target="_blank">📍 在 Google 地圖開啟</a></div>`:''}`);
+  markers[i]=mk;
+});
+const fm=[];
+foods.forEach((f,i)=>{
+  const ic=L.divIcon({html:`<div style="width:11px;height:11px;border-radius:50%;background:#ed8936;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>`,className:'',iconSize:[11,11],iconAnchor:[5,5]});
+  const mk=L.marker([f.lat,f.lng],{icon:ic}).addTo(map);
+  mk.bindPopup(`<div class="popup-title">🍽 ${f.name}</div><div class="popup-sub">${f.item}</div>`);
+  fm[i]=mk;
+});
+const sm=[];
+shops.forEach((s,i)=>{
+  const ic=L.divIcon({html:`<div style="width:10px;height:10px;border-radius:2px;background:#ed8936;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>`,className:'',iconSize:[10,10],iconAnchor:[5,5]});
+  const mk=L.marker([s.lat,s.lng],{icon:ic}).addTo(map);
+  mk.bindPopup(`<div class="popup-title">🛍 ${s.name}</div><div class="popup-sub">${s.item}</div>`);
+  sm[i]=mk;
+});
+
+const vc=spots.filter(s=>s.name!=='移動中'&&s.name!=='東新宿').map(s=>[s.lat,s.lng]);
+map.fitBounds(vc,{padding:[30,30]});
+
+function flyTo(i){if(!markers[i])return;map.flyTo([spots[i].lat,spots[i].lng],15,{duration:.8});markers[i].openPopup();window.scrollTo({top:0,behavior:'smooth'});}
+function flyToFood(i){if(!fm[i])return;map.flyTo([foods[i].lat,foods[i].lng],16,{duration:.8});fm[i].openPopup();window.scrollTo({top:0,behavior:'smooth'});}
+function flyToShop(i){if(!sm[i])return;map.flyTo([shops[i].lat,shops[i].lng],16,{duration:.8});sm[i].openPopup();window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>
